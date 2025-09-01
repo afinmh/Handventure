@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Latih Model LSTM (Pose) di Browser</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+    <style>
+        body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; padding: 20px; line-height: 1.6; }
+        #controls button { font-size: 1.5em; padding: 15px; cursor: pointer; }
+        #log { margin-top: 20px; font-family: monospace; white-space: pre-wrap; background-color: #f4f4f4; border: 1px solid #ddd; padding: 15px; border-radius: 5px; width: 90%; max-height: 500px; overflow-y: scroll; }
+        #downloadLink { display: none; margin-top: 20px; font-size: 1.2em; }
+        .highlight { background-color: #e8f4ff; padding: 2px 4px; border-radius: 3px; }
+    </style>
+</head>
+<body>
+    <h1>Pelatihan Model LSTM BISINDO (Versi Pose + Tangan)</h1>
+    <div id="controls">
+        <button id="startButton">MULAI PELATIHAN</button>
+    </div>
+    <pre id="log">Status: Menunggu untuk memulai...</pre>
+    <a href="#" id="downloadLink">Unduh Model (bisindo_model_pose)</a>
+
+    <script>
+        const startButton = document.getElementById('startButton');
+        const logElement = document.getElementById('log');
+        const downloadLink = document.getElementById('downloadLink');
+        let model;
+
+        function log(message) {
+            console.log(message);
+            logElement.innerHTML += message + '\n';
+            logElement.scrollTop = logElement.scrollHeight;
+        }
+
+        // --- Callback kustom untuk logging, ini sudah benar ---
+        class LoggingCallback extends tf.Callback {
+            constructor(logFunc) {
+                super();
+                this.log = logFunc;
+            }
+            onEpochEnd(epoch, logs) {
+                this.log(`Epoch ${epoch + 1}/500 - Loss: ${logs.loss.toFixed(4)} - Acc: ${logs.acc.toFixed(4)} - Val Loss: ${logs.val_loss.toFixed(4)} - Val Acc: ${logs.val_acc.toFixed(4)}`);
+            }
+        }
+
+        async function main() {
+            startButton.disabled = true;
+
+            // --- 1. PERSIAPAN DATA ---
+            log("--- 1. PERSIAPAN DATA ---");
+            // [PERBAIKAN] Memuat file JSON yang benar
+            log("Memuat dataset_pose.json...");
+            const response = await fetch('dataset_pose.json');
+            const dataset = await response.json();
+            log(`✅ Dataset dimuat, ditemukan ${dataset.length} sekuens.`);
+
+            const labels = [...new Set(dataset.map(item => item.label))];
+            const labelMap = Object.fromEntries(labels.map((label, i) => [label, i]));
+            const numClasses = labels.length;
+            log(`👉 Ditemukan ${numClasses} kelas gerakan: <span class="highlight">${labels.join(', ')}</span>`);
+
+            tf.util.shuffle(dataset);
+
+            const X_data = dataset.map(item => item.sequence);
+            const y_data = dataset.map(item => labelMap[item.label]);
+
+            // [PERBAIKAN] Bentuk tensor disesuaikan menjadi 138 fitur
+            const X_tensor = tf.tensor3d(X_data, [X_data.length, 20, 138]);
+            const y_tensor = tf.oneHot(tf.tensor1d(y_data, 'int32'), numClasses);
+
+            const testSplit = 0.2;
+            const numTest = Math.round(dataset.length * testSplit);
+            const numTrain = dataset.length - numTest;
+
+            const X_train = X_tensor.slice(0, numTrain);
+            const X_test = X_tensor.slice(numTrain);
+            const y_train = y_tensor.slice(0, numTrain);
+            const y_test = y_tensor.slice(numTrain);
+            
+            log(`📦 Ukuran data latih (X_train): [${X_train.shape}]`);
+            log(`📦 Ukuran data uji (X_test): [${X_test.shape}]`);
+
+            // --- 2. MEMBANGUN MODEL LSTM ---
+            log("\n--- 2. MEMBANGUN MODEL LSTM ---");
+            model = tf.sequential();
+            // [PERBAIKAN] inputShape disesuaikan menjadi [20, 138]
+            model.add(tf.layers.lstm({ units: 128, returnSequences: true, activation: 'relu', inputShape: [20, 138] }));
+            model.add(tf.layers.dropout({ rate: 0.2 }));
+            model.add(tf.layers.lstm({ units: 64, returnSequences: false, activation: 'relu' }));
+            model.add(tf.layers.dropout({ rate: 0.2 }));
+            model.add(tf.layers.dense({ units: 64, activation: 'relu' }));
+            model.add(tf.layers.dropout({ rate: 0.2 }));
+            model.add(tf.layers.dense({ units: 32, activation: 'relu' }));
+            model.add(tf.layers.dense({ units: numClasses, activation: 'softmax' }));
+
+            const optimizer = tf.train.adam(0.0005);
+            model.compile({
+                optimizer: optimizer,
+                loss: 'categoricalCrossentropy',
+                metrics: ['accuracy']
+            });
+            
+            log("🧠 Arsitektur Model (Versi Pose):");
+            model.summary(null, null, (msg) => log(msg));
+
+            // --- 3. MELATIH MODEL ---
+            log("\n--- 3. MELATIH MODEL ---");
+            log("🚀 Memulai proses pelatihan (data pose)...");
+            
+            const es_callback = tf.callbacks.earlyStopping({ monitor: 'val_loss', patience: 30});
+            const logging_callback = new LoggingCallback(log);
+            
+            await model.fit(X_train, y_train, {
+                epochs: 500,
+                validationData: [X_test, y_test],
+                callbacks: [
+                    es_callback,
+                    logging_callback // Menggunakan callback logging sederhana yang sudah benar
+                ]
+            });
+            log("✅ Pelatihan selesai!");
+
+            // --- 4. EVALUASI & SIMPAN MODEL ---
+            log("\n--- 4. EVALUASI & SIMPAN MODEL ---");
+            log("📈 Mengevaluasi model dengan data uji...");
+            const [loss, acc] = model.evaluate(X_test, y_test);
+            log(`Akurasi pada data uji: <span class="highlight">${(acc.dataSync()[0] * 100).toFixed(2)}%</span>`);
+            log(`Loss pada data uji: ${loss.dataSync()[0].toFixed(4)}`);
+            log("\nModel siap diunduh!");
+            downloadLink.style.display = 'block';
+
+            X_tensor.dispose(); y_tensor.dispose(); X_train.dispose();
+            X_test.dispose(); y_train.dispose(); y_test.dispose();
+        }
+        
+        downloadLink.addEventListener('click', async () => {
+            if (model) {
+                await model.save('downloads://bisindo_model_pose');
+            }
+        });
+
+        startButton.addEventListener('click', main);
+    </script>
+</body>
+</html>

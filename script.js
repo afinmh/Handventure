@@ -1,0 +1,147 @@
+// --- Mendapatkan Elemen UI ---
+const videoElement = document.getElementsByClassName('input_video')[0];
+const canvasElement = document.getElementById('output_canvas');
+const canvasCtx = canvasElement.getContext('2d');
+const loadingOverlay = document.getElementById('loading-overlay');
+const predictionDisplay = document.getElementById('prediction-display');
+const statusText = document.getElementById('status-text');
+const statusIndicator = document.getElementById('status-indicator');
+const toggleButton = document.getElementById('toggleButton');
+
+// --- Variabel Global ---
+let model, actions, camera, holistic;
+let sequence = [];
+const threshold = 0.85;
+let status = 'MENUNGGU';
+let last_prediction = "";
+let mode = 'NORMAL';
+let ejaan_buffer = [];
+let isCameraActive = false;
+
+// --- Daftar actions HARUS sesuai dengan model 138 fitur ---
+actions = ['a', 'f', 'halo', 'i', 'kamu', 'l', 'n', 'nama', 'perkenalkan', 'saya', 'siapa', 'terimakasih', 'u'];
+
+// --- Ikon untuk Tombol ---
+const startIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/></svg>`;
+const stopIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h12v12H6z"/></svg>`;
+
+// --- Fungsi Helper (extractKeypoints, speak, speakEjaan) tidak berubah ---
+function extractKeypoints(results) {
+    const pose = results.poseLandmarks ? results.poseLandmarks.map(res => [res.x, res.y]).flat() : new Array(33*2).fill(0);
+    const mouth = [pose[9*2], pose[9*2+1], pose[0], pose[1], pose[13*2], pose[13*2+1], pose[14*2], pose[14*2+1]];
+    const shoulders = [pose[11*2], pose[11*2+1], pose[12*2], pose[12*2+1]];
+    const lh = results.leftHandLandmarks ? results.leftHandLandmarks.map(res => [res.x, res.y, res.z]).flat() : new Array(21*3).fill(0);
+    const rh = results.rightHandLandmarks ? results.rightHandLandmarks.map(res => [res.x, res.y, res.z]).flat() : new Array(21*3).fill(0);
+    return [...mouth, ...shoulders, ...lh, ...rh];
+}
+// --- [PERBAIKAN] Menggunakan API TTS yang Anda minta ---
+async function speak(text) { if (!text) return; const apiUrl = `https://tts-api.netlify.app/?text=${encodeURIComponent(text)}&lang=id`; try { const response = await fetch(apiUrl); if (!response.ok) throw new Error(`API request failed`); const blob = await response.blob(); const audioUrl = URL.createObjectURL(blob); new Audio(audioUrl).play(); } catch (e) { console.error("Error pada API TTS:", e); } }
+function speakEjaan(letterArray) { if (!letterArray || letterArray.length === 0) return; let index = 0; async function speakNext() { if (index >= letterArray.length) return; const letter = letterArray[index]; const apiUrl = `https://tts-api.netlify.app/.netlify/functions/api?text=${encodeURIComponent(letter)}&lang=id&speed=1.2`; try { const response = await fetch(apiUrl); if (!response.ok) throw new Error(`API request failed`); const blob = await response.blob(); const audioUrl = URL.createObjectURL(blob); const audio = new Audio(audioUrl); audio.onended = () => { index++; speakNext(); }; audio.play(); } catch (e) { console.error(`Error pada API TTS untuk huruf '${letter}':`, e); index++; speakNext(); } } speakNext(); }
+
+
+// --- Fungsi Utama Aplikasi ---
+async function onResults(results) {
+    canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+    canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
+    drawConnectors(canvasCtx, results.poseLandmarks, POSE_CONNECTIONS, { color: 'rgba(0, 255, 0, 0.5)', lineWidth: 2 });
+    drawConnectors(canvasCtx, results.leftHandLandmarks, HAND_CONNECTIONS, { color: 'rgba(204, 0, 0, 0.8)', lineWidth: 3 });
+    drawConnectors(canvasCtx, results.rightHandLandmarks, HAND_CONNECTIONS, { color: 'rgba(0, 204, 0, 0.8)', lineWidth: 3 });
+    const isVisible = results.poseLandmarks && (results.leftHandLandmarks || results.rightHandLandmarks);
+    if (isVisible) { if (status === 'MENUNGGU') { status = 'MEREKAM'; } if (status === 'MEREKAM') { const keypoints = extractKeypoints(results); sequence.push(keypoints); sequence = sequence.slice(-20); } } else { status = 'MENUNGGU'; sequence = []; }
+    if (sequence.length === 20) { const inputTensor = tf.tensor([sequence]); const prediction = model.predict(inputTensor); const res = await prediction.data(); tf.dispose(inputTensor); tf.dispose(prediction); const maxProb = Math.max(...res); if (maxProb > threshold) { const predIndex = res.indexOf(maxProb); const currentPrediction = actions[predIndex]; if (mode === 'NORMAL') { if (currentPrediction !== last_prediction) { last_prediction = currentPrediction; speak(currentPrediction); } } else if (mode === 'EJA') { if (!ejaan_buffer.length || currentPrediction !== ejaan_buffer[ejaan_buffer.length - 1]) { ejaan_buffer.push(currentPrediction); last_prediction = ""; } } } sequence = []; }
+    predictionDisplay.textContent = mode === 'EJA' ? 'EJA: ' + ejaan_buffer.join('') : last_prediction;
+    statusText.textContent = (status === 'MEREKAM') ? `MEREKAM (${sequence.length}/20)` : "MENUNGGU";
+    statusIndicator.classList.toggle('recording', status === 'MEREKAM');
+}
+
+function setButtonState(state) {
+    if (state === 'active') {
+        toggleButton.innerHTML = stopIcon;
+        toggleButton.className = 'control-button stop';
+        toggleButton.title = 'Hentikan Kamera';
+    } else {
+        toggleButton.innerHTML = startIcon;
+        toggleButton.className = 'control-button start';
+        toggleButton.title = 'Mulai Kamera';
+    }
+}
+
+// --- [PERBAIKAN] Fungsi Inisialisasi dan Start/Stop ---
+
+// Fungsi ini hanya akan dijalankan sekali untuk memuat semua aset
+async function initializeApp() {
+    loadingOverlay.classList.add('show');
+    try {
+        model = await tf.loadLayersModel('./model_web/bisindo_model_pose.json');
+        holistic = new Holistic({locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/holistic@0.5/${file}`});
+        holistic.setOptions({ minDetectionConfidence: 0.5, minTrackingConfidence: 0.5 });
+        holistic.onResults(onResults);
+        
+        const tempCanvas = document.createElement('canvas');
+        const tempCtx = tempCanvas.getContext('2d');
+        
+        // Buat objek kamera sekali dan simpan
+        camera = new Camera(videoElement, {
+            onFrame: async () => {
+                tempCanvas.width = videoElement.videoWidth;
+                tempCanvas.height = videoElement.videoHeight;
+                tempCtx.translate(tempCanvas.width, 0); tempCtx.scale(-1, 1);
+                tempCtx.drawImage(videoElement, 0, 0, tempCanvas.width, tempCanvas.height);
+                await holistic.send({ image: tempCanvas });
+            },
+            width: 640, height: 480 
+        });
+        
+    } catch(e) {
+        console.error("Gagal inisialisasi:", e);
+        alert("Gagal memuat aset penting. Coba muat ulang halaman.");
+    } finally {
+        loadingOverlay.classList.remove('show');
+    }
+}
+
+async function startCamera() {
+    if (!camera) return;
+    await camera.start();
+    isCameraActive = true;
+    setButtonState('active');
+    console.log("Kamera dimulai.");
+}
+
+function stopCamera() {
+    if (camera) {
+        camera.stop();
+        isCameraActive = false;
+        canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+        status = 'MENUNGGU';
+        last_prediction = '';
+        setButtonState('inactive');
+        console.log("Kamera dihentikan.");
+    }
+}
+
+// --- Event Listeners ---
+toggleButton.addEventListener('click', () => {
+    if (!isCameraActive) {
+        startCamera();
+    } else {
+        stopCamera();
+    }
+});
+
+window.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter' && isCameraActive) {
+        if (mode === 'NORMAL') { mode = 'EJA'; ejaan_buffer = []; last_prediction = ""; } 
+        else if (mode === 'EJA') {
+            mode = 'NORMAL';
+            const kata_ejaan = ejaan_buffer.join('');
+            last_prediction = kata_ejaan;
+            speak(kata_ejaan); // Mengucapkan kata utuh
+            ejaan_buffer = [];
+        }
+    }
+});
+
+// Inisialisasi tampilan tombol awal dan muat aset
+setButtonState('inactive');
+initializeApp();
