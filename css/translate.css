@@ -128,12 +128,9 @@ html, body {
     background-color: var(--surface-color);
     border: 1px solid var(--border-color);
     border-radius: 12px;
-    padding: 1rem;
+    padding: 0 1rem 1rem 1rem;
     box-shadow: 0 5px 15px var(--shadow);
 }
-.card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
-.card-header h4 { margin: 0; font-size: 1rem; font-weight: 600; }
-
 /* Penyesuaian Kartu Individual */
 .prediction-card { flex-shrink: 0; } /* [UBAH] Ukuran kartu deteksi diperpendek */
 .prediction-text { font-size: 1.8rem; font-weight: 700; color: var(--accent); text-align: center; min-height: 40px; display: flex; justify-content: center; align-items: center; }
@@ -141,19 +138,194 @@ html, body {
 .status-indicator { width: 8px; height: 8px; border-radius: 50%; background-color: var(--status-wait); transition: background-color 0.3s ease; }
 .status-indicator.recording { background-color: var(--status-record); }
 
-.guide-card { flex-grow: 1; } /* Kartu panduan mengisi sisa ruang */
-.guide-card ul { list-style-type: none; padding-left: 0; margin: 0; }
-.guide-card li { padding-left: 1.5rem; position: relative; margin-bottom: 0.5rem; font-size: 0.9rem; }
-.guide-card li::before { content: '✔'; color: var(--start-color); position: absolute; left: 0; }
+/* --- Style for Updated Guide Card (Gesture) --- */
+.guide-card {
+    display: flex;
+    flex-direction: column;
+}
 
+.gesture-title-wrapper {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+}
+
+.gesture-count {
+    font-size: 0.9rem;
+    font-weight: 400;
+    color: #999;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between; /* Mendorong title ke kiri dan search ke kanan */
+    align-items: center; /* Kembali ke center untuk alignment yang lebih baik */
+    gap: 1rem; /* Memberi jarak antara title dan search bar */
+    margin-bottom: 1rem; /* Atur jarak header ke carousel di bawahnya */
+}
+
+.card-header-prediction{
+    display: flex;
+    justify-content: space-between; /* Mendorong title ke kiri dan search ke kanan */
+    align-items: center; /* Kembali ke center untuk alignment yang lebih baik */
+    gap: 1rem; /* Memberi jarak antara title dan search bar */
+}
+
+/* 2. Hapus margin vertikal dari search-wrapper dan atur lebarnya */
+.search-wrapper {    
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    width: 60%; /* Perkecil dari 50% menjadi 40% */
+}
+
+.search-icon {
+    width: 10%;
+    height: 10%;
+    padding-top: 10px;
+    color: #000000;
+    pointer-events: none;
+}
+
+.search-wrapper input {
+    width: 100%;
+    padding: 0.4rem 0.4rem 0.4rem 15px; /* Perkecil padding dan left padding */
+    border-radius: 6px; /* Perkecil dari 8px */
+    border: 1px solid var(--border-color);
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.8rem; /* Perkecil dari 0.9rem */
+    height: 32px; /* Set tinggi tetap agar sejajar */
+}
+
+.search-wrapper input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(209, 106, 76, 0.2);
+}
+
+.gesture-carousel {
+    flex-grow: 1; /* Make carousel fill remaining space */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.carousel-btn {
+    background-color: transparent;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-dark);
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+}
+
+.carousel-btn:hover:not(:disabled) {
+    background-color: #f0f0f0;
+}
+
+.carousel-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.carousel-btn svg {
+    width: 24px;
+    height: 24px;
+}
+
+.gesture-display {
+    text-align: center;
+}
+
+.gesture-image-container {
+    width: 150px; /* Adjust size as needed */
+    aspect-ratio: 1 / 1; /* This creates the 1:1 ratio */
+    background-color: #f7f7f7;
+    border-radius: 12px;
+    margin: 0 auto 0.5rem;
+    padding: 10px 10px 0 10px; /* Ubah padding: top-right-bottom-left, hilangkan padding bottom */
+    overflow: hidden;
+    display: flex;
+    align-items: flex-end; /* Ubah dari center ke flex-end untuk posisi bawah */
+    justify-content: center;
+    border: 1px solid var(--border-color);
+}
+
+.gesture-image-container img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain; /* Ensures the whole gesture is visible */
+}
+
+#gesture-name {
+    margin: 0;
+    font-weight: 600;
+    color: var(--text-dark);
+    font-size: 0.95rem;
+}
+
+/* --- Remove old guide card list styling --- */
+.guide-card ul { display: none; } /* Hide the old list if it's still there */
 .enter-key-info { text-align: center; font-size: 0.8rem; color: #888; flex-shrink: 0; }
 .enter-key-info kbd { background-color: #eee; padding: 2px 6px; border-radius: 4px; border: 1px solid #ccc; font-family: monospace; color: #333; }
 
 /* --- Loading & Responsif --- */
-.loading-overlay { /* ... sama seperti sebelumnya ... */ }
-.loading-box { /* ... sama seperti sebelumnya ... */ }
-.spinner { /* ... sama seperti sebelumnya ... */ }
-@keyframes spin { /* ... sama seperti sebelumnya ... */ }
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    border-radius: 16px;
+}
+
+.loading-overlay.show {
+    display: flex;
+}
+
+.loading-box {
+    text-align: center;
+    color: white;
+    padding: 2rem;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.loading-box h3 {
+    margin: 1rem 0 0 0;
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: white;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-top: 4px solid white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
 
 @media (max-width: 1024px) {
     .detection-area { flex-direction: column; padding: 1rem; }

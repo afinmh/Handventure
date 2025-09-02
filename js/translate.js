@@ -68,15 +68,27 @@ function setButtonState(state) {
 
 // --- [PERBAIKAN] Fungsi Inisialisasi dan Start/Stop ---
 
+// Fungsi helper untuk update loading text
+function updateLoadingText(text) {
+    const loadingText = loadingOverlay.querySelector('h3');
+    if (loadingText) {
+        loadingText.textContent = text;
+    }
+}
+
 // Fungsi ini hanya akan dijalankan sekali untuk memuat semua aset
 async function initializeApp() {
     loadingOverlay.classList.add('show');
     try {
+        updateLoadingText('Memuat Model AI...');
         model = await tf.loadLayersModel('./model_web/bisindo_model_pose.json');
+        
+        updateLoadingText('Memuat MediaPipe...');
         holistic = new Holistic({locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/holistic@0.5/${file}`});
         holistic.setOptions({ minDetectionConfidence: 0.5, minTrackingConfidence: 0.5 });
         holistic.onResults(onResults);
         
+        updateLoadingText('Menyiapkan Kamera...');
         const tempCanvas = document.createElement('canvas');
         const tempCtx = tempCanvas.getContext('2d');
         
@@ -92,8 +104,13 @@ async function initializeApp() {
             width: 640, height: 480 
         });
         
+        updateLoadingText('Siap digunakan!');
+        // Small delay to show "ready" message
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
     } catch(e) {
         console.error("Gagal inisialisasi:", e);
+        updateLoadingText('Gagal memuat! Coba refresh halaman.');
         alert("Gagal memuat aset penting. Coba muat ulang halaman.");
     } finally {
         loadingOverlay.classList.remove('show');
@@ -102,10 +119,28 @@ async function initializeApp() {
 
 async function startCamera() {
     if (!camera) return;
-    await camera.start();
-    isCameraActive = true;
-    setButtonState('active');
-    console.log("Kamera dimulai.");
+    
+    // Show loading for MediaPipe warmup
+    loadingOverlay.classList.add('show');
+    updateLoadingText('Memulai kamera...');
+    
+    try {
+        await camera.start();
+
+        updateLoadingText('Menyiapkan MediaPipe...');
+        // Wait a bit longer for MediaPipe to fully initialize
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        
+        isCameraActive = true;
+        setButtonState('active');
+        console.log("Kamera dimulai. Warmup Model.");
+        
+    } catch(e) {
+        console.error("Gagal memulai kamera:", e);
+        updateLoadingText('Gagal memulai kamera!');
+    } finally {
+        loadingOverlay.classList.remove('show');
+    }
 }
 
 function stopCamera() {

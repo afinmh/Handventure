@@ -35,7 +35,7 @@
         <main class="detection-area">
             <div class="video-wrapper">
                 <video class="input_video"></video>
-                <canvas id="output_canvas"></canvas>
+                <canvas id="output_canvas" width="1280" height="720"></canvas>
                 
                 <div id="loading-overlay" class="loading-overlay">
                     <div class="loading-box">
@@ -52,7 +52,7 @@
 
             <div class="info-panels">
                 <div class="info-card prediction-card">
-                    <div class="card-header">
+                    <div class="card-header-prediction">
                         <h4>Hasil Deteksi</h4>
                         <div class="status-box">
                             <div id="status-indicator" class="status-indicator"></div>
@@ -64,13 +64,31 @@
 
                 <div class="info-card guide-card">
                     <div class="card-header">
-                        <h4>Panduan Cepat</h4>
+                        <div class="gesture-title-wrapper">
+                            <h4>Gesture</h4>
+                            <span class="gesture-count">(13)</span>
+                        </div>
+
+                        <div class="search-wrapper">
+                            <i data-feather="search" class="search-icon"></i>
+                            <input type="text" placeholder="Cari gestur...">
+                        </div>
                     </div>
-                    <ul>
-                        <li>Posisikan tangan di tengah layar.</li>
-                        <li>Pastikan pencahayaan cukup.</li>
-                        <li>Tahan gerakan selama 1-2 detik.</li>
-                    </ul>
+
+                    <div class="gesture-carousel">
+                        <button class="carousel-btn prev">
+                            <i data-feather="chevron-left"></i>
+                        </button>
+                        <div class="gesture-display">
+                            <div class="gesture-image-container">
+                                <img src="images/placeholder.png" alt="Gesture Example" id="gesture-image">
+                            </div>
+                            <p id="gesture-name">Huruf A</p>
+                        </div>
+                        <button class="carousel-btn next">
+                            <i data-feather="chevron-right"></i>
+                        </button>
+                    </div>
                 </div>
 
                 <div class="info-card enter-key-info">
@@ -81,6 +99,7 @@
     </div>
     
     <script src="js/translate.js"></script>
+    <script src="js/script.js"></script>
     <script>
       feather.replace(); // Inisialisasi Feather Icons
     </script>
