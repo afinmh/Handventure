@@ -14,7 +14,7 @@ print("✅ Pustaka berhasil dimuat.")
 
 # --- 1. PERSIAPAN DATA ---
 # --- [PERUBAHAN] Menggunakan path ke dataset baru Anda ---
-DATA_PATH = os.path.join(os.getcwd(), 'Dataset_BISINDO_Pose')
+DATA_PATH = os.path.join(os.getcwd(), '../Dataset_BISINDO_Pose')
 
 actions = [folder for folder in os.listdir(DATA_PATH) if os.path.isdir(os.path.join(DATA_PATH, folder))]
 actions = np.array(actions)
@@ -64,7 +64,7 @@ model.summary()
 
 # --- 3. MELATIH MODEL ---
 es_callback = EarlyStopping(monitor='val_loss', patience=30, restore_best_weights=True)
-tb_callback = TensorBoard(log_dir='Logs_Pose')
+tb_callback = TensorBoard(log_dir='../Logs_Pose')
 
 print("\n🚀 Memulai proses pelatihan model (data pose)...")
 history = model.fit(

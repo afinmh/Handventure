@@ -1,0 +1,306 @@
+/* Anda harus sudah memiliki :root di file CSS utama Anda */
+:root {
+    --accent: #5A7D7C;
+    --accent-dark: #476261;
+    --accent-light: #a3b6b5;
+    --accent-super-light: #eef1f1;
+}
+
+.chat-bubble {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background: var(--accent);
+    color: #fff;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 16px rgba(34, 49, 63, 0.15);
+    cursor: pointer;
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+.chat-bubble:hover {
+    background: var(--accent-dark);
+    transform: scale(1.1);
+}
+.chat-bubble.hidden {
+    transform: scale(0);
+    opacity: 0;
+}
+
+.chat-window {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 400px;
+    height: 500px;
+    max-height: calc(100vh - 4rem); /* Batas tinggi agar tidak keluar layar */
+    background: #fff;
+    border-radius: 1rem;
+    box-shadow: 0 8px 32px rgba(34, 49, 63, 0.18);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    z-index: 99999;
+    transition: all 0.3s ease-out;
+}
+.chat-window.hidden {
+    transform: translateY(20px);
+    opacity: 0;
+    pointer-events: none;
+}
+.chat-window.collapsed {
+    height: 55px; /* Sesuaikan dengan tinggi header */
+    bottom: 2rem;
+}
+.chat-window.collapsed .chat-messages,
+.chat-window.collapsed .chat-input-area {
+    display: none;
+}
+
+.chat-header {
+    background: var(--accent);
+    color: #fff;
+    padding: 0.8rem 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+}
+.header-title {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+.header-icon {
+    width: 28px;
+    height: 28px;
+}
+.header-title h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+.header-buttons {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.chat-header button {
+    background: transparent;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    padding: 0.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+}
+.chat-header button:hover {
+    opacity: 1;
+}
+.chat-header button i {
+    width: 20px;
+    height: 20px;
+}
+
+.chat-messages {
+    flex: 1;
+    padding: 1rem;
+    overflow-y: auto;
+    background: #f7fafc;
+}
+
+.message {
+    margin-bottom: 1rem;
+    display: flex;
+    max-width: 90%;
+}
+.message-content {
+    padding: 0.8rem 1.1rem;
+    box-shadow: 0 1px 4px rgba(34, 49, 63, 0.07);
+    line-height: 1.5;
+}
+.message.bot-message {
+    justify-content: flex-start;
+}
+.message.bot-message .message-content {
+    background: var(--accent-super-light);
+    border: 1px solid var(--accent-light);
+    color: #374151;
+    border-radius: 0 1rem 1rem 1rem;
+}
+.message.user-message {
+    justify-content: flex-end;
+    margin-left: auto;
+}
+.message.user-message .message-content {
+    background: var(--accent);
+    color: #fff;
+    border-radius: 1rem 0 1rem 1rem;
+    border: 1px solid var(--accent);
+}
+
+.typing-indicator span {
+    height: 8px;
+    width: 8px;
+    background-color: var(--accent-light);
+    border-radius: 50%;
+    display: inline-block;
+    animation: bounce 1.4s infinite;
+}
+.typing-indicator span:nth-of-type(2) { animation-delay: 0.2s; }
+.typing-indicator span:nth-of-type(3) { animation-delay: 0.4s; }
+@keyframes bounce {
+    0%, 60%, 100% { transform: translateY(0); }
+    30% { transform: translateY(-6px); }
+}
+
+.source-toggle {
+    background-color: transparent;
+    border: 1px solid var(--accent-light);
+    color: var(--accent);
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    cursor: pointer;
+    margin-top: 0.8rem;
+    font-size: 0.8rem;
+    transition: all 0.2s;
+}
+.source-toggle:hover {
+    background-color: var(--accent-super-light);
+}
+.source-toggle.hidden { display: none; }
+.sources-container {
+    margin-top: 1rem;
+    border-top: 1px solid var(--accent-super-light);
+    padding-top: 0.8rem;
+}
+.sources-container.hidden { display: none; }
+.doc-item {
+    font-size: 0.85rem;
+    margin-bottom: 0.8rem;
+    padding-left: 0.5rem;
+    border-left: 2px solid var(--accent-light);
+}
+.doc-title-link {
+    font-weight: bold;
+    color: var(--primary-color, #0056b3);
+    text-decoration: none;
+    transition: color 0.2s ease, text-decoration 0.2s ease;
+    display: block;
+    margin-bottom: 0.2rem;
+}
+.doc-title-link:hover {
+    color: var(--primary-dark, #003d82);
+    text-decoration: underline;
+}
+.doc-title-link:active {
+    color: var(--accent-color, #d9534f);
+}
+.doc-meta { font-size: 0.75rem; color: #888; margin: 0.2rem 0; }
+.doc-snippet { font-style: italic; color: #555; }
+
+.chat-input-area {
+    padding: 0.8rem;
+    background: #fff;
+    border-top: 1px solid #e0e0e0;
+    align-items: center;
+    gap: 0.5rem;
+}
+#chat-form {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+#chat-input {
+    flex: 1;
+    height: 44px;
+    padding: 0 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+#send-btn {
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+#send-btn:disabled {
+    background: var(--accent-light);
+    cursor: not-allowed;
+}
+#send-btn:hover:not(:disabled) {
+    background: var(--accent-dark);
+}
+
+/* --- TAMBAHAN CSS RESPONSIVE UNTUK MOBILE --- */
+/* Target untuk layar dengan lebar maksimal 768px */
+@media (max-width: 768px) {
+    /* 1. Ubah chat window menjadi layar penuh */
+    .chat-window {
+        width: 100vw; /* Lebar penuh viewport */
+        height: 100vh; /* Tinggi penuh viewport */
+        bottom: 0;
+        right: 0;
+        border-radius: 0; /* Hilangkan sudut melengkung */
+        max-height: 100vh; /* Override max-height sebelumnya */
+    }
+
+    /* 2. Sesuaikan animasi hide/show untuk mode layar penuh */
+    .chat-window.hidden {
+        /* Animasi keluar ke bawah layar */
+        transform: translateY(100%);
+        opacity: 1; /* Opacity bisa tetap 1 agar transisi lebih mulus */
+    }
+
+    /* 3. Mode collapsed tidak relevan di mobile, bisa diabaikan atau disembunyikan */
+    .chat-window.collapsed {
+       display: none; /* Sembunyikan jika tidak ingin digunakan di mobile */
+    }
+
+    /* 4. Kecilkan bubble dan geser posisinya sedikit */
+    .chat-bubble {
+        width: 50px;
+        height: 50px;
+        bottom: 1rem;
+        right: 1rem;
+    }
+    
+    /* 5. Beri sedikit padding pada area pesan agar tidak terlalu mepet ke tepi */
+    .chat-messages {
+        padding: 0.8rem;
+    }
+
+    /* 6. Sedikit penyesuaian pada header */
+    .chat-header {
+        padding: 0.6rem 1rem;
+    }
+    .header-title h3 {
+        font-size: 1rem;
+    }
+    
+}
+
+@media (max-width: 768px) {
+    #collapse-chat-btn{
+        display: none;
+    }
+}

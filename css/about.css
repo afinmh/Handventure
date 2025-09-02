@@ -1,0 +1,122 @@
+.about-section {
+    padding: 6rem 7%; /* Padding global, gunakan persentase untuk responsif */
+    background-color: var(--bg-main); /* #FBFBFB */
+    overflow: hidden; /* Pastikan tidak ada overflow dari AOS atau ilustrasi */
+}
+
+.about-section .container.about-grid {
+    display: flex; /* Menggunakan Flexbox untuk layout dua kolom */
+    align-items: center; /* Pusat vertikal konten */
+    gap: 4rem; /* Jarak antara kolom teks dan gambar */
+    max-width: 1200px; /* Batas lebar maksimum container */
+    margin: 0 auto; /* Tengah container */
+}
+
+.about-content {
+    flex: 1; /* Konten teks akan mengambil sisa ruang */
+    min-width: 45%; /* Minimal lebar agar teks tidak terlalu sempit */
+    text-align: left; /* Teks rata kiri */
+}
+
+.about-content h2 {
+    font-size: 2.8rem; /* Ukuran judul lebih besar */
+    font-weight: 700;
+    color: var(--text-dark); /* Clay Brown */
+    margin-bottom: 1.5rem; /* Jarak bawah yang lebih besar */
+    line-height: 1.2; /* Kerapatan baris judul */
+}
+
+.about-content h2 span {
+    color: var(--accent); /* Terracotta untuk aksen */
+}
+
+.about-description, .about-description-secondary {
+    font-size: 1.1rem;
+    color: #6c757d; /* Warna abu-abu yang lebih lembut */
+    line-height: 1.7;
+    margin-bottom: 1.5rem; /* Jarak antar paragraf */
+}
+
+.about-description-secondary {
+    margin-bottom: 2.5rem; /* Jarak lebih besar sebelum tombol */
+}
+
+.btn-explore {
+    display: inline-flex; /* Agar ikon dan teks sejajar */
+    align-items: center;
+    gap: 0.75rem; /* Jarak antara ikon dan teks */
+    background-color: var(--accent); /* Terracotta */
+    color: var(--text-light); /* Putih terang */
+    padding: 0.8rem 1.8rem;
+    border-radius: 50px; /* Bentuk pill */
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    border: none;
+}
+
+.btn-explore:hover {
+    background-color: var(--accent-dark); /* Skin Tone Dark saat hover */
+    transform: translateY(-3px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.btn-explore i {
+    width: 20px; /* Ukuran ikon feather */
+    height: 20px;
+}
+
+.about-image {
+    flex: 1; /* Gambar akan mengambil sisa ruang */
+    display: flex;
+    justify-content: center; /* Tengah gambar di kolomnya */
+    align-items: center;
+    min-width: 45%; /* Minimal lebar agar gambar tidak terlalu kecil */
+}
+
+.about-illustration {
+    max-width: 100%; /* Pastikan gambar tidak melebihi kontainernya */
+    height: auto; /* Jaga rasio aspek */
+    display: block; /* Menghilangkan ruang ekstra di bawah gambar */
+}
+
+/* --- Media Queries (Responsif) --- */
+@media (max-width: 992px) {
+    .about-section .container.about-grid {
+        flex-direction: column; /* Ubah layout menjadi satu kolom di tablet/mobile */
+        gap: 3rem; /* Kurangi jarak antar kolom */
+    }
+
+    .about-content, .about-image {
+        flex: none; /* Nonaktifkan flex-grow */
+        width: 100%; /* Ambil lebar penuh */
+        max-width: 600px; /* Batasi lebar di tengah */
+        margin: 0 auto; /* Tengah di layar kecil */
+    }
+
+    .about-content {
+        text-align: center; /* Teks jadi rata tengah */
+    }
+    
+    .about-content h2 {
+        font-size: 2.2rem;
+    }
+
+    .about-description, .about-description-secondary {
+        font-size: 1rem;
+    }
+
+    .btn-explore {
+        margin: 0 auto; /* Tengah tombol jika teks rata tengah */
+    }
+}
+
+@media (max-width: 768px) {
+    .about-section {
+        padding: 4rem 1rem; /* Kurangi padding di mobile */
+    }
+    .about-content h2 {
+        font-size: 2rem;
+    }
+}

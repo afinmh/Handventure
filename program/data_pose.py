@@ -20,7 +20,7 @@ def extract_keypoints(results):
     return np.concatenate([mouth, shoulders, lh, rh])
 
 # --- PENGATURAN AWAL ---
-DATA_PATH = os.path.join(os.getcwd(), 'Dataset_BISINDO_Pose')
+DATA_PATH = os.path.join(os.getcwd(), '../Dataset_BISINDO_Pose')
 no_sequences = 30
 sequence_length = 20
 os.makedirs(DATA_PATH, exist_ok=True)

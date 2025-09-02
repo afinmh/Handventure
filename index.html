@@ -3,41 +3,177 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HandSpeak - 2.0</title>
-    <link rel="stylesheet" href="style.css">
-    
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/holistic@0.5/holistic.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils@0.3/drawing_utils.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils@0.3/camera_utils.js" crossorigin="anonymous"></script>
+    <title>Handventure | Your Adventure in Hand Expressions</title>
+
+    <link rel="icon" type="image/png" href="images/favicon.png">
+
+    <link rel="stylesheet" href="/css/navbar.css"> 
+    <link rel="stylesheet" href="/css/landing.css">
+    <link rel="stylesheet" href="/css/about.css">
+    <link rel="stylesheet" href="/css/features.css">
+    <link rel="stylesheet" href="/css/footer.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="/js/main.js" defer></script>
 </head>
 <body>
-    <div class="app-container">
-        <div class="video-container">
-            <video class="input_video"></video>
-            <canvas id="output_canvas" width="640" height="480"></canvas>
+    <header class="navbar">
+        <a href="#" class="navbar-logo">
+            <img src="/images/favicon.png" alt="Logo Handventure" class="logo-icon">
+            Handventure<span>.</span>
+        </a>
+        
+        <nav class="navbar-nav">
+            <a href="#about">Tentang</a>
+            <a href="#features">Fitur</a>
+            <a href="#mission">Tujuan</a>
+            <a href="/games.html">Games</a>
+        </nav>
 
-            <div class="ui-panel">
-                <div id="prediction-display" class="prediction-text"></div>
-                <div class="status-box">
-                    <div id="status-indicator" class="status-indicator"></div>
-                    <div id="status-text">MENUNGGU</div>
+        <div class="navbar-extra">
+            <a href="/translate.html" class="cta-button">Lets Try!</a>
+            <a href="#" id="hamburger-menu"><i data-feather="menu"></i></a>
+        </div>
+    </header>
+
+    <section class="landing-page">
+        <div class="container">
+            <h1 data-aos="fade-right" data-aos-duration="1500">Your Adventure in Hand Expressions.</h1>
+            
+            <p data-aos="fade-right" data-aos-duration="2000">Ubah setiap gerakan tangan menjadi pemahaman. Platform kami memberdayakan Anda untuk menerjemahkan isyarat secara <i>real-time</i> dan menantang diri dengan game visual yang unik.</p>
+            
+            <div class="hero-actions" data-aos="fade-up" data-aos-duration="2500">
+                <a href="/translate.html" class="cta-primary">Coba Sekarang</a>
+                <a href="/games.html" class="cta-secondary">Mainkan Game</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="about" class="about-section">
+        <div class="container about-grid">
+            <div class="about-content" data-aos="fade-right">
+                <h2>Setiap Gerakan,<br><span>Sebuah Makna.</span></h2>
+                <p class="about-description">
+                    Handventure adalah platform web yang mengubah gerakan tangan menjadi pemahaman. Gunakan webcam untuk menerjemahkan bahasa isyarat secara instan dan jelajahi game interaktif yang edukatif—semuanya langsung dari browser, tanpa perlu instalasi.
+                </p>
+                <a href="#features" class="btn-explore">
+                    <i data-feather="arrow-right"></i> Jelajahi Lebih Lanjut
+                </a>
+            </div>
+            <div class="about-image" data-aos="fade-left">
+                <img src="/images/about.svg" alt="Ilustrasi Handventure" class="about-illustration">
+            </div>
+        </div>
+</section>
+
+    <section id="features" class="features-section-alt">
+        <div class="container">
+            <h2 data-aos="fade-down">Fitur Unggulan <span>Handventure</span></h2>
+            
+            <div class="feature-block">
+                <div class="feature-image" data-aos="fade-right">
+                    <img src="/images/svg/isyarat.svg" alt="Ilustrasi Penerjemah Bahasa Isyarat">
+                </div>
+                <div class="feature-content" data-aos="fade-left">
+                    <h3>Deteksi Bahasa Isyarat</h3>
+                    <p>Handventure menerjemahkan <span>BISINDO</span> dengan computer vision, mengubah gerakan tangan menjadi teks real-time melalui webcam untuk komunikasi inklusif.</p>
+                    <div class="supporting-feature">
+                        <img src="/images/svg/icon-realtime.svg" alt="Ikon Real-time" class="supporting-icon">
+                        <p>Dengan deteksi objek yang cepat dan akurat, indikasi terjemahan dapat ditampilkan secara langsung untuk memperlancar percakapan.</p>
+                    </div>
                 </div>
             </div>
 
-            <div id="loading-overlay" class="loading-overlay">
-                <div class="loading-box">
-                    <div class="spinner"></div>
-                    <h2>Memuat Model Deteksi</h2>
-                    <p>Mengunduh & inisialisasi model...</p>
+            <div class="feature-block reverse">
+                <div class="feature-image" data-aos="fade-left">
+                    <img src="/images/svg/game.svg" alt="Ilustrasi Games Interaktif">
                 </div>
+                <div class="feature-content" data-aos="fade-right">
+                    <h3>Arena Bermain Handventure</h3>
+                    <p>Lebih dari sekadar penerjemah, Handventure adalah arena bermainmu. Kontrol berbagai game seru menggunakan gerakan tangan dan tubuh untuk cara bersenang-senang yang unik.</p>
+                    <div class="supporting-feature">
+                        <img src="/images/svg/icon-fun-learning.svg" alt="Ikon Belajar Menyenangkan" class="supporting-icon">
+                        <p>Game dirancang untuk meningkatkan kecepatan, akurasi, dan memori gerakan tangan Anda dengan cara yang tidak membosankan.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="feature-block">
+                <div class="feature-image" data-aos="fade-right">
+                    <img src="/images/svg/learning.svg" alt="Ilustrasi Mitra Belajar">
+                </div>
+                <div class="feature-content" data-aos="fade-left">
+                    <h3>Sumber Belajar & Inspirasi Kami</h3>
+                    <p>Ingin belajar bahasa isyarat dari awal? Aplikasi <span>Hear Me</span> adalah salah satu sumber belajar <span>BISINDO</span> terlengkap yang menjadi referensi utama dalam pengembangan dataset Handventure.</p>
+                    <div class="supporting-feature">
+                        <img src="/images/svg/apps.svg" alt="Ikon Aplikasi" class="supporting-icon">
+                        <div class="supporting-content"> <p>Kami memulai dari sini, dan Anda juga bisa! Dapatkan jalur belajar BISINDO yang terstruktur dan efektif.</p>
+                            <a href="https://play.google.com/store/apps/details?id=com.hearmeid.app" target="_blank" class="playstore-button">
+                                <img src="/images/svg/playstore.png" alt="Download di Google Play">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                
+                <div class="footer-col">
+                    <a href="#" class="footer-logo">
+                        <img src="/images/favicon.png" alt="Logo Handventure" class="footer-logo-img"> 
+                        Handventure<span>.</span>
+                    </a>
+                    <p class="footer-mission">Teknologi inklusif untuk menjembatani setiap percakapan.</p>
+                </div>
+                
+                <div class="footer-col">
+                    <h4 class="footer-heading">Navigasi</h4>
+                    <ul class="footer-links">
+                        <li><a href="#about">Tentang</a></li>
+                        <li><a href="#features">Fitur</a></li>
+                        <li><a href="#mission">Misi</a></li>
+                        <li><a href="/games.html">Games</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-col">
+                    <h4 class="footer-heading">Dukungan</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Pusat Bantuan</a></li>
+                        <li><a href="#">Kebijakan Privasi</a></li>
+                        <li><a href="#">Syarat & Ketentuan</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-col">
+                    <h4 class="footer-heading">Terhubung</h4>
+                    <div class="social-links">
+                        <a href="#" aria-label="Instagram"><i data-feather="instagram"></i></a>
+                        <a href="#" aria-label="Github"><i data-feather="github"></i></a>
+                        <a href="#" aria-label="Mail"><i data-feather="mail"></i></a>
+                    </div>
+                </div>
+                
             </div>
             
-            <button id="toggleButton" class="control-button">
-                </button>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Handventure. All rights reserved.</p>
+            </div>
         </div>
-        <div class="footer">Tekan 'Enter' untuk beralih mode EJA/NORMAL</div>
-    </div>
-    <script src="script.js"></script>
+    </footer>
+
+    <script src="/js/main.js"></script>
+    <script>
+      feather.replace()
+    </script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+      AOS.init();
+    </script>
 </body>
 </html>

@@ -1,0 +1,154 @@
+/* /css/features.css */
+
+.features-section-alt {
+    padding: 6rem 7%;
+    background-color: var(--bg-main);
+    overflow: hidden;
+}
+
+.features-section-alt .container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Styling Judul Utama Section */
+.features-section-alt h2 {
+    text-align: center;
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 5rem;
+}
+
+.features-section-alt h2 span {
+    color: var(--accent);
+}
+
+/* Blok Fitur Individual */
+.feature-block {
+    display: flex;
+    align-items: center;
+    gap: 4rem;
+    margin-bottom: 6rem;
+}
+
+/* Modifier untuk layout Zig-Zag */
+.feature-block.reverse {
+    flex-direction: row-reverse;
+}
+
+/* Kolom Gambar & Konten */
+.feature-image, .feature-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.feature-image img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 12px;
+}
+
+/* Konten Teks */
+.feature-content h3 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 1rem;
+}
+
+.feature-content > p {
+    font-size: 1.1rem;
+    color: #6c757d;
+    line-height: 1.7;
+    margin-bottom: 2rem;
+}
+
+/* --- BLOK PERBAIKAN UTAMA UNTUK SUPPORTING FEATURE --- */
+.supporting-feature {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    background-color: #ffffff;
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 1px solid #eee;
+    text-align: left;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+}
+
+/* Ukuran ikon pendukung yang lebih proporsional */
+.supporting-icon {
+    width: 70px; /* Ukuran ikon disesuaikan */
+    height: auto;
+    flex-shrink: 0;
+}
+
+/* Kontainer untuk paragraf dan tombol */
+.supporting-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Konten di dalamnya rata kiri */
+    gap: 1rem;
+    flex-grow: 1;
+}
+
+.supporting-content p {
+    font-size: 0.95rem;
+    color: #555;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* KODE PERBAIKAN UTAMA UNTUK TOMBOL */
+.playstore-button {
+    display: inline-block;
+    max-width: 100px; /* Atur lebar maksimum tombol */
+    height: auto;
+    
+    /* Perbaikan: Paksa agar tidak ada background atau border yang aneh */
+    background: none !important;
+    border: none !important;
+    padding: 0 !important;
+
+    transition: transform 0.2s ease;
+}
+
+.playstore-button:hover {
+    transform: scale(1.05);
+}
+
+/* Pastikan gambar di dalam tombol mengisi wadahnya dengan benar */
+.playstore-button img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* --- Media Queries (Responsif) --- */
+@media (max-width: 992px) {
+    .feature-block, .feature-block.reverse {
+        flex-direction: column;
+        gap: 2rem;
+        margin-bottom: 4rem;
+    }
+
+    .feature-content { order: 2; }
+    .feature-image { order: 1; max-width: 500px; margin: 0 auto; }
+
+    .feature-content h3, .feature-content > p { text-align: center; }
+
+    .supporting-feature {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .supporting-content {
+        align-items: center; /* Tombol dan paragraf menjadi rata tengah di mobile */
+    }
+}
+
+@media (max-width: 768px) {
+    .features-section-alt { padding: 4rem 1rem; }
+    .features-section-alt h2 { font-size: 2.2rem; margin-bottom: 3rem; }
+}

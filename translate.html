@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HandSpeak - 2.0</title>
+    <link rel="stylesheet" href="css/style.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/holistic@0.5/holistic.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils@0.3/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils@0.3/camera_utils.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div class="app-container">
+        <div class="video-container">
+            <video class="input_video"></video>
+            <canvas id="output_canvas" width="640" height="480"></canvas>
+
+            <div class="ui-panel">
+                <div id="prediction-display" class="prediction-text"></div>
+                <div class="status-box">
+                    <div id="status-indicator" class="status-indicator"></div>
+                    <div id="status-text">MENUNGGU</div>
+                </div>
+            </div>
+
+            <div id="loading-overlay" class="loading-overlay">
+                <div class="loading-box">
+                    <div class="spinner"></div>
+                    <h2>Memuat Model Deteksi</h2>
+                    <p>Mengunduh & inisialisasi model...</p>
+                </div>
+            </div>
+            
+            <button id="toggleButton" class="control-button">
+                </button>
+        </div>
+        <div class="footer">Tekan 'Enter' untuk beralih mode EJA/NORMAL</div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

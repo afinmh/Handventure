@@ -1,0 +1,148 @@
+/* /css/footer.css */
+
+.footer {
+    /* [UBAH] Warna dikembalikan ke tema gelap original */
+    background-color: #1a1a1a; 
+    color: #e0e0e0;
+    padding: 3rem 2rem 1.5rem;
+    font-family: 'Poppins', sans-serif; /* Ganti jika Anda pakai font lain */
+}
+
+.footer .container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.footer-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 2.5rem;
+    margin-bottom: 2rem;
+}
+
+/* Kolom Pertama (Logo & Misi) */
+.footer-col .footer-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    /* [UBAH] Ukuran logo diperkecil dari 2.2rem menjadi 2rem */
+    font-size: 2rem; 
+    font-weight: 700;
+    color: #fff;
+    text-decoration: none;
+    margin-bottom: 1rem;
+}
+
+.footer-logo-img {
+    width: 35px; /* Ukuran ikon logo juga disesuaikan */
+    height: 35px;
+}
+
+.footer-col .footer-logo span {
+    /* [UBAH] Warna aksen dikembalikan */
+    color: #8b4513; 
+}
+
+.footer-mission {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    /* [UBAH] Warna teks misi dikembalikan */
+    color: #a0a0a0; 
+}
+
+/* Kolom Link & Judul */
+.footer-heading {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 1.5rem;
+    position: relative;
+}
+
+.footer-heading::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -8px;
+    width: 40px;
+    height: 2px;
+    /* [UBAH] Warna garis bawah dikembalikan */
+    background-color: #8b4513; 
+}
+
+.footer-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-links li {
+    margin-bottom: 0.8rem;
+}
+
+.footer-links a {
+    /* [UBAH] Warna link dikembalikan */
+    color: #a0a0a0;
+    text-decoration: none;
+    font-size: 1rem;
+    transition: color 0.3s ease, padding-left 0.3s ease;
+}
+
+.footer-links a:hover {
+    color: #fff;
+    padding-left: 5px;
+}
+
+/* Kolom Sosial Media */
+.social-links {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.social-links a {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 40px;
+    /* [UBAH] Warna background ikon sosial dikembalikan */
+    background-color: #333; 
+    color: #fff;
+    border-radius: 50%;
+    text-decoration: none;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.social-links a:hover {
+    /* [UBAH] Warna hover dikembalikan */
+    background-color: #8b4513; 
+    transform: translateY(-3px);
+}
+
+.social-links a i {
+    width: 20px;
+    height: 20px;
+}
+
+/* Bagian Bawah Footer (Copyright) */
+.footer-bottom {
+    text-align: center;
+    padding-top: 1.5rem;
+    /* [UBAH] Warna garis pemisah dikembalikan */
+    border-top: 1px solid #333; 
+    font-size: 0.9rem;
+    /* [UBAH] Warna teks copyright dikembalikan */
+    color: #a0a0a0; 
+}
+
+/* Penyesuaian Responsif */
+@media (max-width: 768px) {
+    .footer-grid {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 2rem;
+    }
+    .footer {
+        padding: 3rem 1rem 1.5rem;
+    }
+}

@@ -4,9 +4,9 @@ import numpy as np
 import json
 
 # [PERUBAHAN] Path menunjuk ke dataset baru Anda
-DATA_PATH = 'Dataset_BISINDO_Pose'
+DATA_PATH = '../Dataset_BISINDO_Pose'
 # [PERUBAHAN] Nama file output diubah agar tidak tertukar
-OUTPUT_JSON = 'dataset_pose.json' 
+OUTPUT_JSON = '../dataset_pose.json' 
 
 print(f"Mulai membaca dataset dari '{DATA_PATH}'...")
 

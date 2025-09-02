@@ -16,7 +16,7 @@ MODEL_NAME = 'bisindo_model_pose.h5'
 model = load_model(MODEL_NAME)
 
 # --- [PERUBAHAN] Path ke dataset baru untuk mendapatkan daftar 'actions' ---
-DATA_PATH = os.path.join(os.getcwd(), 'Dataset_BISINDO_Pose')
+DATA_PATH = os.path.join(os.getcwd(), '../Dataset_BISINDO_Pose')
 actions = np.array([folder for folder in os.listdir(DATA_PATH) if os.path.isdir(os.path.join(DATA_PATH, folder))])
 print(f"✅ Model '{MODEL_NAME}' dan {len(actions)} kelas berhasil dimuat.")
 

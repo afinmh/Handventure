@@ -1,0 +1,139 @@
+/* /css/navbar.css */
+
+/* [UBAH] Palet Warna Baru - Disesuaikan dengan Brand Handventure */
+:root {
+    --bg-main: #FBFBFB;        /* Latar belakang utama yang sangat terang */
+    --bg-navbar-scrolled: rgba(215, 204, 200, 0.85); /* Sand Beige dengan transparansi */
+    --text-dark: #8D6E63;       /* Clay Brown untuk teks */
+    --text-light: #f9fafb;      /* Putih pudar untuk teks di atas gambar */
+    --accent: #D16A4C;          /* Terracotta sebagai warna Aksen/CTA */
+    --accent-dark: #8C5A3C;      /* Skin Tone Dark untuk hover atau elemen sekunder */
+    --shadow: rgba(141, 110, 99, 0.1); /* Bayangan berbasis Clay Brown */
+}
+
+/* Style Dasar Navbar (Sama seperti sebelumnya, hanya menggunakan variabel baru) */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 7%;
+    background-color: transparent;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 9999;
+    transition: all 0.3s ease-in-out;
+}
+
+
+.navbar.scrolled {
+    background-color: #FFFFFF; 
+    box-shadow: 0 4px 12px var(--shadow); 
+}
+
+/* Logo */
+.navbar .navbar-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--text-light);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+.navbar.scrolled .navbar-logo {
+    color: var(--text-dark);
+}
+.navbar .navbar-logo span {
+    color: var(--accent); /* Titik dengan warna Terracotta */
+}
+.logo-icon {
+    height: 2rem;
+}
+
+/* Navigasi Link */
+.navbar .navbar-nav a {
+    color: var(--text-light);
+    display: inline-block;
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0 1.2rem;
+    text-decoration: none;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+.navbar.scrolled .navbar-nav a {
+    color: var(--text-dark);
+}
+.navbar .navbar-nav a:hover {
+    color: var(--accent);
+    transform: translateY(-2px);
+}
+
+/* [TAMBAH] Styling untuk Tombol CTA di Navbar */
+.navbar .navbar-extra .cta-button {
+    background-color: var(--accent);
+    color: var(--text-light);
+    padding: 0.6rem 1.2rem;
+    border-radius: 20px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    margin-right: 1rem;
+}
+.navbar .navbar-extra .cta-button:hover {
+    background-color: var(--accent-dark);
+    transform: scale(1.05);
+}
+.navbar.scrolled .navbar-extra .cta-button {
+    /* Opsi: Anda bisa membuat warnanya tetap sama atau sedikit berubah saat discroll */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    color: var(--text-light);
+}
+
+/* Ikon Hamburger & Extra Items */
+.navbar .navbar-extra {
+    display: flex;
+    align-items: center;
+}
+.navbar .navbar-extra a {
+    color: var(--text-light);
+    transition: color 0.3s ease;
+}
+.navbar.scrolled .navbar-extra a {
+    color: var(--text-dark);
+}
+#hamburger-menu {
+    display: none;
+}
+
+/* --- Media Queries (Responsif) --- */
+@media (max-width: 768px) {
+    .navbar .navbar-nav {
+        /* ... (kode responsif navbar-nav Anda, sudah bagus) ... */
+        position: absolute;
+        top: 100%;
+        right: -100%;
+        background-color: #ffffff;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+        border-radius: 0 0 10px 10px;
+        width: 18rem;
+        transition: right 0.3s ease-in-out;
+    }
+    .navbar .navbar-nav.active {
+        right: 0;
+    }
+    .navbar .navbar-nav a {
+        color: var(--text-dark);
+        display: block;
+        margin: 1.2rem;
+        padding: 0.5rem;
+    }
+    .navbar .navbar-extra .cta-button {
+        display: none; /* Sembunyikan tombol CTA di mode mobile agar tidak ramai */
+    }
+    #hamburger-menu {
+        display: inline-block;
+    }
+}

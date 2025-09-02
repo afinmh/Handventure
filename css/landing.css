@@ -1,0 +1,136 @@
+/* /css/landing.css */
+
+/* [UBAH] Gunakan variabel warna dari navbar.css jika memungkinkan, atau definisikan di sini */
+/* Di sini kita akan menggunakan variabel yang sama */
+
+body, html {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', 'Arial', sans-serif;
+    background: var(--bg-main);
+}
+
+html {
+    /* Menghaluskan efek scroll */
+    scroll-behavior: smooth;
+    scroll-padding-top: -1rem;
+
+}
+
+.landing-page {
+    height: 100vh;
+    /* [UBAH] Ganti 'your-background-image.jpg' dengan gambar yang relevan */
+    /* SARAN: Gambar dinamis yang menampilkan gerakan tangan atau interaksi dengan webcam */
+    background: url('../images/bg1.jpg') center center/cover no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    color: var(--text-light);
+    text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    position: relative;
+}
+
+.landing-page::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 60%;
+    height: 100%;
+    /* [UBAH] Gradien disesuaikan dengan warna Clay Brown */
+    background: linear-gradient(90deg, rgba(141, 110, 99, 0.85) 70%, rgba(141, 110, 99, 0) 100%);
+    z-index: 1;
+}
+
+.landing-page .container {
+    position: relative;
+    z-index: 2;
+    text-align: left;
+    max-width: 650px; /* Sedikit lebih lebar untuk mengakomodasi tombol */
+    padding: 2rem 4rem;
+}
+
+.landing-page h1 {
+    font-size: 3.2rem; /* Sedikit lebih besar untuk dampak maksimal */
+    font-weight: 700;
+    margin-bottom: 1rem;
+    line-height: 1.2;
+}
+
+.landing-page p {
+    font-size: 1.3rem;
+    margin-bottom: 2.5rem; /* Beri ruang lebih untuk tombol di bawahnya */
+    line-height: 1.7;
+    max-width: 550px; /* Batasi lebar paragraf agar lebih mudah dibaca */
+}
+
+/* [TAMBAH] Styling untuk container tombol dan tombol itu sendiri */
+.hero-actions {
+    display: flex;
+    gap: 1rem; /* Jarak antara tombol */
+    align-items: center;
+}
+
+.cta-primary, .cta-secondary {
+    padding: 0.8rem 1.8rem;
+    border-radius: 50px; /* Rounded pill shape */
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.cta-primary {
+    background-color: var(--accent); /* Terracotta */
+    color: var(--text-light);
+}
+.cta-primary:hover {
+    background-color: var(--accent-dark);
+    transform: translateY(-3px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.cta-secondary {
+    background-color: transparent;
+    color: var(--text-light);
+    border: 2px solid var(--text-light);
+}
+.cta-secondary:hover {
+    background-color: var(--text-light);
+    color: var(--text-dark);
+    transform: translateY(-3px);
+}
+
+/* --- Media Queries (Responsive) --- */
+@media (max-width: 768px) {
+    .landing-page {
+        justify-content: center;
+    }
+    .landing-page::before {
+        width: 100%;
+        /* [UBAH] Gradien untuk mobile dibuat lebih pekat agar teks terbaca */
+        background: linear-gradient(180deg, rgba(141, 110, 99, 0.8) 0%, rgba(141, 110, 99, 0.9) 100%);
+    }
+    .landing-page .container {
+        text-align: center;
+        padding: 1.5rem;
+        max-width: 90%;
+    }
+    .landing-page h1 {
+        font-size: 2.5rem;
+    }
+    .landing-page p {
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+    }
+    .hero-actions {
+        flex-direction: column; /* Tombol jadi atas-bawah di mobile */
+        width: 100%;
+    }
+    .cta-primary, .cta-secondary {
+        width: 80%; /* Lebar tombol di mobile */
+        text-align: center;
+    }
+}
