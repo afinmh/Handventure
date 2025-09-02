@@ -3,8 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HandSpeak - 2.0</title>
-    <link rel="stylesheet" href="css/style.css">
+    <title>Handventure - Deteksi Real-time</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/feather-icons"></script>
+    
+    <link rel="stylesheet" href="css/translate.css">
     
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/holistic@0.5/holistic.js" crossorigin="anonymous"></script>
@@ -12,32 +17,72 @@
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils@0.3/camera_utils.js" crossorigin="anonymous"></script>
 </head>
 <body>
-    <div class="app-container">
-        <div class="video-container">
-            <video class="input_video"></video>
-            <canvas id="output_canvas" width="640" height="480"></canvas>
+    <div class="app-view">
+        
+        <header class="app-header">
+            <a href="index.html" class="header-logo">
+                <img src="images/favicon.png" alt="Logo Handventure">
+                Handventure<span>.</span>
+            </a>
+            <nav class="header-nav">
+                <a href="games.html">
+                    <i data-feather="play-circle"></i>
+                    <span>Mainkan Game</span>
+                </a>
+            </nav>
+        </header>
 
-            <div class="ui-panel">
-                <div id="prediction-display" class="prediction-text"></div>
-                <div class="status-box">
-                    <div id="status-indicator" class="status-indicator"></div>
-                    <div id="status-text">MENUNGGU</div>
+        <main class="detection-area">
+            <div class="video-wrapper">
+                <video class="input_video"></video>
+                <canvas id="output_canvas"></canvas>
+                
+                <div id="loading-overlay" class="loading-overlay">
+                    <div class="loading-box">
+                        <div class="spinner"></div>
+                        <h3>Memuat Model Deteksi...</h3>
+                    </div>
+                </div>
+
+                <div class="controls-overlay">
+                    <button id="toggleButton" class="control-button">
+                        </button>
                 </div>
             </div>
 
-            <div id="loading-overlay" class="loading-overlay">
-                <div class="loading-box">
-                    <div class="spinner"></div>
-                    <h2>Memuat Model Deteksi</h2>
-                    <p>Mengunduh & inisialisasi model...</p>
+            <div class="info-panels">
+                <div class="info-card prediction-card">
+                    <div class="card-header">
+                        <h4>Hasil Deteksi</h4>
+                        <div class="status-box">
+                            <div id="status-indicator" class="status-indicator"></div>
+                            <span id="status-text">MENUNGGU</span>
+                        </div>
+                    </div>
+                    <div id="prediction-display" class="prediction-text">-</div>
+                </div>
+
+                <div class="info-card guide-card">
+                    <div class="card-header">
+                        <h4>Panduan Cepat</h4>
+                    </div>
+                    <ul>
+                        <li>Posisikan tangan di tengah layar.</li>
+                        <li>Pastikan pencahayaan cukup.</li>
+                        <li>Tahan gerakan selama 1-2 detik.</li>
+                    </ul>
+                </div>
+
+                <div class="info-card enter-key-info">
+                    <span>Tekan <kbd>Enter</kbd> untuk beralih mode</span>
                 </div>
             </div>
-            
-            <button id="toggleButton" class="control-button">
-                </button>
-        </div>
-        <div class="footer">Tekan 'Enter' untuk beralih mode EJA/NORMAL</div>
+        </main>
     </div>
-    <script src="script.js"></script>
+    
+    <script src="js/translate.js"></script>
+    <script>
+      feather.replace(); // Inisialisasi Feather Icons
+    </script>
 </body>
 </html>

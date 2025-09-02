@@ -152,3 +152,7 @@
     .features-section-alt { padding: 4rem 1rem; }
     .features-section-alt h2 { font-size: 2.2rem; margin-bottom: 3rem; }
 }
+
+.feature-block p span {
+    color: var(--accent); /* Terracotta untuk aksen */
+}

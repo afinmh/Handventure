@@ -11,6 +11,10 @@ body, html {
     background: var(--bg-main);
 }
 
+body {
+    overflow-x: hidden;
+}
+
 html {
     /* Menghaluskan efek scroll */
     scroll-behavior: smooth;
@@ -22,7 +26,7 @@ html {
     height: 100vh;
     /* [UBAH] Ganti 'your-background-image.jpg' dengan gambar yang relevan */
     /* SARAN: Gambar dinamis yang menampilkan gerakan tangan atau interaksi dengan webcam */
-    background: url('../images/bg1.jpg') center center/cover no-repeat;
+    background: url('../images/bg.webp') center center/cover no-repeat;
     display: flex;
     align-items: center;
     justify-content: flex-start;

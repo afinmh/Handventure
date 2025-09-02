@@ -1,0 +1,173 @@
+/* /css/translate.css */
+:root {
+    --bg-main: #FBFBFB;
+    --surface-color: #ffffff;
+    --text-dark: #8D6E63;
+    --text-light: #f9fafb;
+    --accent: #D16A4C;
+    --accent-dark: #8C5A3C;
+    --shadow: rgba(141, 110, 99, 0.1);
+    --border-color: #E0E0E0;
+    --status-record: #EF4444;
+    --status-wait: #EAB308;
+    --start-color: #4CAF50;
+    --stop-color: #F44336;
+    --dark-surface: #2c2c2c; /* Warna gelap untuk nuansa aplikasi */
+}
+
+/* --- Layout Aplikasi Penuh (100vh) --- */
+* { box-sizing: border-box; }
+html, body {
+    height: 100%;
+    margin: 0;
+    overflow: hidden; /* Mencegah scroll */
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--bg-main);
+}
+.app-view {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100vw;
+}
+
+/* --- Header & Navigasi --- */
+.app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background-color: var(--surface-color);
+    border-bottom: 1px solid var(--border-color);
+    flex-shrink: 0; /* Header tidak mengecil */
+}
+.header-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    text-decoration: none;
+}
+.header-logo img { height: 28px; }
+.header-logo span { color: var(--accent); }
+.header-nav a {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background-color: var(--accent);
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: background-color 0.2s ease;
+}
+.header-nav a:hover { background-color: var(--accent-dark); }
+.header-nav span { font-size: 0.9rem; }
+
+/* --- Area Deteksi Utama --- */
+.detection-area {
+    flex-grow: 1; /* Mengisi sisa ruang */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    padding: 2rem;
+    overflow: hidden;
+}
+.video-wrapper {
+    position: relative;
+    width: 70%; /* Lebar video utama */
+    height: 100%;
+    background-color: #000;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px var(--shadow);
+}
+#output_canvas { width: 100%; height: 100%; }
+.input_video { display: none; }
+
+/* --- Tombol Kontrol di Dalam Video --- */
+.controls-overlay {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 1rem;
+    z-index: 10;
+}
+.control-button {
+    width: 60px; /* Ukuran disesuaikan */
+    height: 60px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+.control-button:hover { transform: scale(1.1); }
+.control-button svg { width: 28px; height: 28px; color: white; }
+.control-button.start { background-color: var(--start-color); }
+.control-button.stop { background-color: var(--stop-color); }
+
+/* --- Panel Informasi di Kanan --- */
+.info-panels {
+    width: 30%; /* Lebar panel informasi */
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+.info-card {
+    background-color: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: 0 5px 15px var(--shadow);
+}
+.card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+.card-header h4 { margin: 0; font-size: 1rem; font-weight: 600; }
+
+/* Penyesuaian Kartu Individual */
+.prediction-card { flex-shrink: 0; } /* [UBAH] Ukuran kartu deteksi diperpendek */
+.prediction-text { font-size: 1.8rem; font-weight: 700; color: var(--accent); text-align: center; min-height: 40px; display: flex; justify-content: center; align-items: center; }
+.status-box { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; }
+.status-indicator { width: 8px; height: 8px; border-radius: 50%; background-color: var(--status-wait); transition: background-color 0.3s ease; }
+.status-indicator.recording { background-color: var(--status-record); }
+
+.guide-card { flex-grow: 1; } /* Kartu panduan mengisi sisa ruang */
+.guide-card ul { list-style-type: none; padding-left: 0; margin: 0; }
+.guide-card li { padding-left: 1.5rem; position: relative; margin-bottom: 0.5rem; font-size: 0.9rem; }
+.guide-card li::before { content: '✔'; color: var(--start-color); position: absolute; left: 0; }
+
+.enter-key-info { text-align: center; font-size: 0.8rem; color: #888; flex-shrink: 0; }
+.enter-key-info kbd { background-color: #eee; padding: 2px 6px; border-radius: 4px; border: 1px solid #ccc; font-family: monospace; color: #333; }
+
+/* --- Loading & Responsif --- */
+.loading-overlay { /* ... sama seperti sebelumnya ... */ }
+.loading-box { /* ... sama seperti sebelumnya ... */ }
+.spinner { /* ... sama seperti sebelumnya ... */ }
+@keyframes spin { /* ... sama seperti sebelumnya ... */ }
+
+@media (max-width: 1024px) {
+    .detection-area { flex-direction: column; padding: 1rem; }
+    .video-wrapper { width: 100%; height: 60%; }
+    .info-panels { width: 100%; height: 40%; flex-direction: row; }
+    .guide-card { display: none; } /* Sembunyikan panduan di layar kecil agar tidak penuh */
+    .prediction-card { flex-grow: 1; }
+    .enter-key-info { flex-grow: 1; display: flex; justify-content: center; align-items: center; }
+}
+@media (max-width: 768px) {
+    .app-header { padding: 0.8rem 1rem; }
+    .header-logo span { display: none; } /* Sembunyikan teks 'Handventure' di mobile */
+    .header-nav span { display: none; } /* Sembunyikan teks 'Mainkan Game' */
+    .header-nav a { padding: 0.5rem; }
+    .info-panels { flex-direction: column; }
+    .prediction-text { font-size: 1.5rem; }
+}
