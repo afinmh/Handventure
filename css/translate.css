@@ -327,6 +327,212 @@ html, body {
     100% { transform: rotate(360deg); }
 }
 
+/* --- Guide Modal --- */
+.guide-modal {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    border-radius: 16px;
+    padding: 1rem; /* Tambahkan padding untuk safe area */
+    box-sizing: border-box;
+}
+
+.guide-modal.show {
+    display: flex;
+}
+
+.guide-modal-content {
+    background: white;
+    padding: 1.5rem; /* Dikurangi dari 2rem ke 1.5rem */
+    max-width: 420px; /* Dikurangi dari 500px ke 420px */
+    width: 95%; /* Dikurangi dari 90% ke 95% untuk lebih responsive */
+    max-height: 85%; /* Tambahkan max-height untuk mencegah overflow vertikal */
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    overflow-y: auto; /* Tambahkan scroll jika konten terlalu panjang */
+    box-sizing: border-box;
+}
+
+.guide-modal h2 {
+    color: var(--text-dark);
+    margin-bottom: 1rem; /* Dikurangi dari 1.5rem ke 1rem */
+    font-size: 1.3rem; /* Dikurangi dari 1.5rem ke 1.3rem */
+}
+
+.guide-steps {
+    text-align: left;
+    margin-bottom: 1.5rem; /* Dikurangi dari 2rem ke 1.5rem */
+}
+
+.guide-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.8rem; /* Dikurangi dari 1rem ke 0.8rem */
+    margin-bottom: 0.8rem; /* Dikurangi dari 1rem ke 0.8rem */
+    padding: 0.8rem; /* Dikurangi dari 1rem ke 0.8rem */
+    background: #f8f9fa;
+    border-radius: 6px; /* Dikurangi dari 8px ke 6px */
+}
+
+.step-number {
+    background: var(--accent);
+    color: white;
+    width: 22px; /* Dikurangi dari 24px ke 22px */
+    height: 22px; /* Dikurangi dari 24px ke 22px */
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem; /* Dikurangi dari 0.8rem ke 0.75rem */
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.guide-step p {
+    margin: 0;
+    color: var(--text-dark);
+    font-size: 0.85rem; /* Dikurangi dari 0.9rem ke 0.85rem */
+    line-height: 1.3; /* Dikurangi dari 1.4 ke 1.3 */
+}
+
+.calibration-btn {
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 0.7rem 1.5rem; /* Dikurangi dari 0.8rem 2rem ke 0.7rem 1.5rem */
+    border-radius: 6px; /* Dikurangi dari 8px ke 6px */
+    font-size: 0.9rem; /* Dikurangi dari 1rem ke 0.9rem */
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.calibration-btn:hover {
+    background: var(--accent-dark);
+}
+
+/* --- Calibration Overlay --- */
+.calibration-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    z-index: 1500;
+    pointer-events: none;
+}
+
+.calibration-overlay.show {
+    display: block;
+}
+
+.calibration-zones {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.shoulder-zone {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    border: 3px solid #4CAF50;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(76, 175, 80, 0.1);
+    transition: all 0.3s ease;
+}
+
+.shoulder-zone.calibrated {
+    border-color: #2196F3;
+    background: rgba(33, 150, 243, 0.2);
+}
+
+.left-shoulder {
+    top: 75%;
+    left: 20%;
+    transform: translate(-50%, -50%);
+}
+
+.right-shoulder {
+    top: 75%;
+    left: 80%;
+    transform: translate(-50%, -50%);
+}
+
+.shoulder-target {
+    width: 20px;
+    height: 20px;
+    background: #4CAF50;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+}
+
+.shoulder-zone.calibrated .shoulder-target {
+    background: #2196F3;
+}
+
+.shoulder-label {
+    position: absolute;
+    bottom: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: white;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+}
+
+.calibration-status {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    color: white;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    backdrop-filter: blur(10px);
+}
+
+.calibration-status p {
+    margin: 0 0 0.5rem 0;
+    font-weight: 600;
+}
+
+.calibration-progress {
+    width: 200px;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.calibration-bar {
+    height: 100%;
+    background: #4CAF50;
+    width: 0%;
+    transition: width 0.3s ease;
+    border-radius: 3px;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.2); opacity: 0.7; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
 @media (max-width: 1024px) {
     .detection-area { flex-direction: column; padding: 1rem; }
     .video-wrapper { width: 100%; height: 60%; }
@@ -334,7 +540,32 @@ html, body {
     .guide-card { display: none; } /* Sembunyikan panduan di layar kecil agar tidak penuh */
     .prediction-card { flex-grow: 1; }
     .enter-key-info { flex-grow: 1; display: flex; justify-content: center; align-items: center; }
+    
+    /* Modal responsive adjustments */
+    .guide-modal-content {
+        max-width: 350px;
+        width: 98%;
+        padding: 1rem;
+        max-height: 90%;
+    }
+    
+    .guide-modal h2 {
+        font-size: 1.2rem;
+        margin-bottom: 0.8rem;
+    }
+    
+    .guide-step {
+        gap: 0.6rem;
+        margin-bottom: 0.6rem;
+        padding: 0.6rem;
+    }
+    
+    .guide-step p {
+        font-size: 0.8rem;
+        line-height: 1.2;
+    }
 }
+
 @media (max-width: 768px) {
     .app-header { padding: 0.8rem 1rem; }
     .header-logo span { display: none; } /* Sembunyikan teks 'Handventure' di mobile */
@@ -342,4 +573,59 @@ html, body {
     .header-nav a { padding: 0.5rem; }
     .info-panels { flex-direction: column; }
     .prediction-text { font-size: 1.5rem; }
+    
+    /* Modal mobile adjustments */
+    .guide-modal {
+        padding: 0.5rem;
+    }
+    
+    .guide-modal-content {
+        max-width: 320px;
+        width: 100%;
+        padding: 0.8rem;
+        max-height: 95%;
+    }
+    
+    .guide-modal h2 {
+        font-size: 1.1rem;
+        margin-bottom: 0.6rem;
+    }
+    
+    .guide-steps {
+        margin-bottom: 1rem;
+    }
+    
+    .guide-step {
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+        padding: 0.5rem;
+    }
+    
+    .guide-step p {
+        font-size: 0.75rem;
+        line-height: 1.1;
+    }
+    
+    .step-number {
+        width: 20px;
+        height: 20px;
+        font-size: 0.7rem;
+    }
+    
+    .calibration-btn {
+        padding: 0.6rem 1.2rem;
+        font-size: 0.8rem;
+    }
+}
+
+#overlay_image {
+    position: absolute; /* Posisikan secara absolut di dalam video-wrapper */
+    top: 0;
+    left: 0;
+    width: 100%; 
+    height: 100%; 
+    object-fit: cover;
+    z-index: 5;
+    opacity: 0.7;
+    display: none; /* Hidden by default, akan ditampilkan setelah kalibrasi */
 }

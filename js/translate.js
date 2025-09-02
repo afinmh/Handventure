@@ -7,6 +7,11 @@ const predictionDisplay = document.getElementById('prediction-display');
 const statusText = document.getElementById('status-text');
 const statusIndicator = document.getElementById('status-indicator');
 const toggleButton = document.getElementById('toggleButton');
+const guideModal = document.getElementById('guide-modal');
+const calibrationOverlay = document.getElementById('calibration-overlay');
+const startCalibrationBtn = document.getElementById('start-calibration');
+const calibrationText = document.getElementById('calibration-text');
+const calibrationBar = document.getElementById('calibration-bar');
 
 // --- Variabel Global ---
 let model, actions, camera, holistic;
@@ -17,6 +22,16 @@ let last_prediction = "";
 let mode = 'NORMAL';
 let ejaan_buffer = [];
 let isCameraActive = false;
+
+// --- Kalibrasi Bahu ---
+const LEFT_SHOULDER_THRESH  = [0.70, 0.85, 0.75, 0.90];
+const RIGHT_SHOULDER_THRESH = [0.20, 0.40, 0.75, 0.90];
+let isCalibrated = false;
+let calibrationProgress = 0;
+let calibrationFrames = 0;
+const CALIBRATION_FRAMES_NEEDED = 30;
+let leftShoulderCalibrated = false;
+let rightShoulderCalibrated = false;
 
 // --- Daftar actions HARUS sesuai dengan model 138 fitur ---
 actions = ['a', 'f', 'halo', 'i', 'kamu', 'l', 'n', 'nama', 'perkenalkan', 'saya', 'siapa', 'terimakasih', 'u'];
@@ -46,12 +61,113 @@ async function onResults(results) {
     drawConnectors(canvasCtx, results.poseLandmarks, POSE_CONNECTIONS, { color: 'rgba(0, 255, 0, 0.5)', lineWidth: 2 });
     drawConnectors(canvasCtx, results.leftHandLandmarks, HAND_CONNECTIONS, { color: 'rgba(204, 0, 0, 0.8)', lineWidth: 3 });
     drawConnectors(canvasCtx, results.rightHandLandmarks, HAND_CONNECTIONS, { color: 'rgba(0, 204, 0, 0.8)', lineWidth: 3 });
+    
+    // Jika belum dikalibrasi, lakukan kalibrasi bahu
+    if (!isCalibrated && results.poseLandmarks) {
+        checkShoulderCalibration(results.poseLandmarks);
+        return;
+    }
+    
     const isVisible = results.poseLandmarks && (results.leftHandLandmarks || results.rightHandLandmarks);
     if (isVisible) { if (status === 'MENUNGGU') { status = 'MEREKAM'; } if (status === 'MEREKAM') { const keypoints = extractKeypoints(results); sequence.push(keypoints); sequence = sequence.slice(-20); } } else { status = 'MENUNGGU'; sequence = []; }
     if (sequence.length === 20) { const inputTensor = tf.tensor([sequence]); const prediction = model.predict(inputTensor); const res = await prediction.data(); tf.dispose(inputTensor); tf.dispose(prediction); const maxProb = Math.max(...res); if (maxProb > threshold) { const predIndex = res.indexOf(maxProb); const currentPrediction = actions[predIndex]; if (mode === 'NORMAL') { if (currentPrediction !== last_prediction) { last_prediction = currentPrediction; speak(currentPrediction); } } else if (mode === 'EJA') { if (!ejaan_buffer.length || currentPrediction !== ejaan_buffer[ejaan_buffer.length - 1]) { ejaan_buffer.push(currentPrediction); last_prediction = ""; } } } sequence = []; }
     predictionDisplay.textContent = mode === 'EJA' ? 'EJA: ' + ejaan_buffer.join('') : last_prediction;
     statusText.textContent = (status === 'MEREKAM') ? `MEREKAM (${sequence.length}/20)` : "MENUNGGU";
     statusIndicator.classList.toggle('recording', status === 'MEREKAM');
+}
+
+// --- Fungsi Kalibrasi Bahu ---
+function checkShoulderCalibration(poseLandmarks) {
+    const leftShoulder = poseLandmarks[11]; // LEFT_SHOULDER
+    const rightShoulder = poseLandmarks[12]; // RIGHT_SHOULDER
+    
+    if (!leftShoulder || !rightShoulder) return;
+    
+    // Cek apakah bahu kiri dalam zona
+    const leftInZone = leftShoulder.x >= LEFT_SHOULDER_THRESH[0] && 
+                       leftShoulder.x <= LEFT_SHOULDER_THRESH[1] && 
+                       leftShoulder.y >= LEFT_SHOULDER_THRESH[2] && 
+                       leftShoulder.y <= LEFT_SHOULDER_THRESH[3];
+    
+    // Cek apakah bahu kanan dalam zona
+    const rightInZone = rightShoulder.x >= RIGHT_SHOULDER_THRESH[0] && 
+                        rightShoulder.x <= RIGHT_SHOULDER_THRESH[1] && 
+                        rightShoulder.y >= RIGHT_SHOULDER_THRESH[2] && 
+                        rightShoulder.y <= RIGHT_SHOULDER_THRESH[3];
+    
+    // Gambar titik bahu untuk debugging
+    drawShoulderPoints(leftShoulder, rightShoulder);
+    
+    // Update status zona
+    const leftZone = document.querySelector('.left-shoulder');
+    const rightZone = document.querySelector('.right-shoulder');
+    
+    if (leftInZone && !leftShoulderCalibrated) {
+        leftZone.classList.add('calibrated');
+        leftShoulderCalibrated = true;
+    } else if (!leftInZone && leftShoulderCalibrated) {
+        leftZone.classList.remove('calibrated');
+        leftShoulderCalibrated = false;
+    }
+    
+    if (rightInZone && !rightShoulderCalibrated) {
+        rightZone.classList.add('calibrated');
+        rightShoulderCalibrated = true;
+    } else if (!rightInZone && rightShoulderCalibrated) {
+        rightZone.classList.remove('calibrated');
+        rightShoulderCalibrated = false;
+    }
+    
+    // Jika kedua bahu dalam zona, mulai hitung mundur
+    if (leftInZone && rightInZone) {
+        calibrationFrames++;
+        calibrationProgress = (calibrationFrames / CALIBRATION_FRAMES_NEEDED) * 100;
+        calibrationBar.style.width = calibrationProgress + '%';
+        
+        if (calibrationFrames >= CALIBRATION_FRAMES_NEEDED) {
+            completeCalibration();
+        } else {
+            calibrationText.textContent = `Pertahankan posisi... ${Math.ceil((CALIBRATION_FRAMES_NEEDED - calibrationFrames) / 10)}`;
+        }
+    } else {
+        calibrationFrames = 0;
+        calibrationProgress = 0;
+        calibrationBar.style.width = '0%';
+        calibrationText.textContent = 'Posisikan kedua bahu pada area hijau';
+    }
+}
+
+function drawShoulderPoints(leftShoulder, rightShoulder) {
+    const canvasWidth = canvasElement.width;
+    const canvasHeight = canvasElement.height;
+    
+    // Gambar titik bahu kiri
+    canvasCtx.beginPath();
+    canvasCtx.arc(leftShoulder.x * canvasWidth, leftShoulder.y * canvasHeight, 8, 0, 2 * Math.PI);
+    canvasCtx.fillStyle = 'red';
+    canvasCtx.fill();
+    
+    // Gambar titik bahu kanan
+    canvasCtx.beginPath();
+    canvasCtx.arc(rightShoulder.x * canvasWidth, rightShoulder.y * canvasHeight, 8, 0, 2 * Math.PI);
+    canvasCtx.fillStyle = 'blue';
+    canvasCtx.fill();
+}
+
+function completeCalibration() {
+    isCalibrated = true;
+    calibrationOverlay.classList.remove('show');
+    calibrationText.textContent = 'Kalibrasi selesai! Mulai gesture detection...';
+    
+    // Reset status
+    status = 'MENUNGGU';
+    last_prediction = '';
+    sequence = [];
+    
+    setTimeout(() => {
+        statusText.textContent = 'MENUNGGU';
+        predictionDisplay.textContent = '-';
+    }, 1000);
 }
 
 function setButtonState(state) {
@@ -135,12 +251,38 @@ async function startCamera() {
         setButtonState('active');
         console.log("Kamera dimulai. Warmup Model.");
         
+        // Tampilkan modal panduan setelah MediaPipe siap
+        showGuideModal();
+        
     } catch(e) {
         console.error("Gagal memulai kamera:", e);
         updateLoadingText('Gagal memulai kamera!');
     } finally {
         loadingOverlay.classList.remove('show');
     }
+}
+
+// --- Fungsi Modal dan Kalibrasi ---
+function showGuideModal() {
+    guideModal.classList.add('show');
+}
+
+function startCalibration() {
+    guideModal.classList.remove('show');
+    calibrationOverlay.classList.add('show');
+    
+    // Reset kalibrasi
+    isCalibrated = false;
+    calibrationFrames = 0;
+    calibrationProgress = 0;
+    leftShoulderCalibrated = false;
+    rightShoulderCalibrated = false;
+    
+    // Reset visual elements
+    document.querySelector('.left-shoulder').classList.remove('calibrated');
+    document.querySelector('.right-shoulder').classList.remove('calibrated');
+    calibrationBar.style.width = '0%';
+    calibrationText.textContent = 'Posisikan kedua bahu pada area hijau';
 }
 
 function stopCamera() {
@@ -156,6 +298,8 @@ function stopCamera() {
 }
 
 // --- Event Listeners ---
+startCalibrationBtn.addEventListener('click', startCalibration);
+
 toggleButton.addEventListener('click', () => {
     if (!isCameraActive) {
         startCamera();
@@ -165,7 +309,7 @@ toggleButton.addEventListener('click', () => {
 });
 
 window.addEventListener('keydown', (event) => {
-    if (event.key === 'Enter' && isCameraActive) {
+    if (event.key === 'Enter' && isCameraActive && isCalibrated) {
         if (mode === 'NORMAL') { mode = 'EJA'; ejaan_buffer = []; last_prediction = ""; } 
         else if (mode === 'EJA') {
             mode = 'NORMAL';

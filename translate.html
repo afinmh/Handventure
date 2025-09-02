@@ -44,6 +44,52 @@
                     </div>
                 </div>
 
+                <!-- Modal Panduan Kalibrasi -->
+                <div id="guide-modal" class="guide-modal">
+                    <div class="guide-modal-content">
+                        <h2>Panduan Penggunaan</h2>
+                        <div class="guide-steps">
+                            <div class="guide-step">
+                                <span class="step-number">1</span>
+                                <p>Posisikan bahu Anda sejajar dengan kamera, berdiri tegak dengan jarak 1-1.5 meter dari kamera</p>
+                            </div>
+                            <div class="guide-step">
+                                <span class="step-number">2</span>
+                                <p>Pastikan skeleton jari tangan terlihat dengan jelas selama perekaman gesture</p>
+                            </div>
+                            <div class="guide-step">
+                                <span class="step-number">3</span>
+                                <p>Gunakan pencahayaan yang cukup, hindari backlight atau cahaya yang terlalu redup</p>
+                            </div>
+                            <div class="guide-step">
+                                <span class="step-number">4</span>
+                                <p>Sekarang, posisikan bahu Anda pada area hijau yang akan muncul untuk kalibrasi</p>
+                            </div>
+                        </div>
+                        <button id="start-calibration" class="calibration-btn">Mulai Kalibrasi</button>
+                    </div>
+                </div>
+
+                <!-- Overlay Kalibrasi -->
+                <div id="calibration-overlay" class="calibration-overlay">
+                    <div class="calibration-zones">
+                        <div class="shoulder-zone left-shoulder">
+                            <div class="shoulder-target"></div>
+                            <span class="shoulder-label">Bahu Kiri</span>
+                        </div>
+                        <div class="shoulder-zone right-shoulder">
+                            <div class="shoulder-target"></div>
+                            <span class="shoulder-label">Bahu Kanan</span>
+                        </div>
+                    </div>
+                    <div class="calibration-status">
+                        <p id="calibration-text">Posisikan bahu Anda pada area hijau</p>
+                        <div class="calibration-progress">
+                            <div id="calibration-bar" class="calibration-bar"></div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="controls-overlay">
                     <button id="toggleButton" class="control-button">
                         </button>
