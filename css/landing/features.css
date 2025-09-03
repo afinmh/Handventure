@@ -156,3 +156,57 @@
 .feature-block p span {
     color: var(--accent); /* Terracotta untuk aksen */
 }
+
+/* --- Styling Tombol Play --- */
+.play-button {
+    display: inline-block;
+    background-color: var(--accent);
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 0.8rem 1.8rem;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    margin-top: 1rem;
+}
+
+.play-button:hover {
+    background-color: #e0573a; /* sedikit lebih gelap dari var(--accent) */
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+}
+
+.play-button:active {
+    transform: translateY(0);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+}
+
+/* Coming Soon Section */
+.coming-soon {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Vertikal tengah */
+    align-items: center;     /* Horizontal tengah */
+    text-align: center;
+    padding: 4rem 2rem;
+    margin-top: 2rem;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #f9f9f9, #ffffff);
+    border: 1px dashed var(--accent);
+    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+}
+
+.coming-soon h3 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 1rem;
+}
+
+.coming-soon p {
+    font-size: 1.1rem;
+    color: #6c757d;
+    line-height: 1.6;
+}

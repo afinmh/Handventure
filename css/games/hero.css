@@ -1,0 +1,279 @@
+/* === ROOT VARIABLES & GENERAL STYLES === */
+:root {
+    --bg-main: #FBFBFB;
+    --surface-color: #ffffff;
+    --text-dark: #8D6E63; /* Coklat Tua Lembut */
+    --text-light: #f9fafb;
+    --accent: #D16A4C; /* Terracotta */
+    --accent-dark: #8C5A3C; /* Coklat Bata */
+    --shadow: rgba(141, 110, 99, 0.1);
+    --border-color: #E0E0E0;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    outline: none;
+    border: none;
+    text-decoration: none;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background-color: var(--bg-main);
+    font-family: 'Poppins', sans-serif;
+    color: var(--text-dark);
+}
+
+/* === NAVBAR STYLES === */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.4rem 7%;
+    background-color: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border-color);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 999;
+}
+
+.navbar .navbar-logo {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.navbar .navbar-logo span {
+    color: var(--accent);
+}
+
+.navbar .navbar-logo .logo-icon {
+    width: 40px;
+    height: 40px;
+}
+
+.navbar .navbar-nav a {
+    font-size: 1rem;
+    color: var(--text-dark);
+    display: inline-block;
+    margin: 0 1rem;
+    font-weight: 600;
+    position: relative;
+}
+
+.navbar .navbar-nav a::after {
+    content: '';
+    position: absolute;
+    bottom: -0.4rem;
+    left: 0;
+    width: 0;
+    height: 3px;
+    background-color: var(--accent);
+    transition: width 0.3s;
+}
+
+.navbar .navbar-nav a:hover::after {
+    width: 100%;
+}
+
+.navbar .navbar-extra a {
+    color: var(--text-dark);
+    margin: 0 0.5rem;
+}
+
+.navbar .navbar-extra .cta-button {
+    background-color: var(--accent);
+    color: white;
+    padding: 0.6rem 1.5rem;
+    border-radius: 50px;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+}
+
+.navbar .navbar-extra .cta-button:hover {
+    background-color: var(--accent-dark);
+}
+
+#hamburger-menu {
+    display: none;
+}
+
+/* === MAIN CONTENT: GAME LOBBY === */
+.game-lobby {
+    padding: 8rem 7% 4rem;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.lobby-header {
+    text-align: center;
+    margin-bottom: 5rem;
+}
+
+.lobby-header h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.lobby-header p {
+    font-size: 1.2rem;
+    color: #6c757d;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+/* === NEW GAME LIST STYLES (INSPIRED BY FEATURE SECTION) === */
+.game-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6rem; /* Jarak antar kartu game */
+}
+
+.game-item {
+    display: flex;
+    align-items: center;
+    gap: 4rem;
+}
+
+.game-item.reverse {
+    flex-direction: row-reverse;
+}
+
+.game-image, .game-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.game-image img {
+    width: 100%;
+    height: auto;
+    border-radius: 16px;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    box-shadow: 0 10px 40px var(--shadow);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.game-item:hover .game-image img {
+    transform: scale(1.03);
+    box-shadow: 0 15px 50px rgba(141, 110, 99, 0.2);
+}
+
+.game-content h3 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+}
+
+.game-details-box {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.5rem;
+    background-color: var(--surface-color);
+    padding: 2rem;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.05);
+}
+
+.game-details-box p {
+    font-size: 1.05rem;
+    color: #555;
+    line-height: 1.7;
+    margin: 0;
+}
+
+.play-button {
+    background-color: var(--accent);
+    color: white;
+    padding: 0.7rem 1.8rem;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.play-button:hover {
+    background-color: var(--accent-dark);
+    transform: scale(1.05);
+}
+
+/* === RESPONSIVE STYLES === */
+/* Tablet */
+@media (max-width: 992px) {
+    .game-list {
+        gap: 4rem;
+    }
+
+    .game-item, .game-item.reverse {
+        flex-direction: column;
+        gap: 2rem;
+        text-align: center;
+    }
+
+    .game-image {
+        max-width: 500px;
+        margin: 0 auto;
+    }
+    
+    .game-content h3 {
+        font-size: 2rem;
+    }
+
+    .game-details-box {
+        align-items: center;
+        text-align: center;
+    }
+}
+
+/* Mobile Phone */
+@media (max-width: 768px) {
+    html {
+        font-size: 90%;
+    }
+
+    #hamburger-menu {
+        display: inline-block;
+    }
+
+    .navbar .navbar-nav {
+        position: absolute;
+        top: 100%;
+        right: -100%;
+        background-color: var(--surface-color);
+        width: 18rem;
+        height: 100vh;
+        transition: right 0.3s ease-in-out;
+        box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+    }
+
+    .navbar .navbar-nav.active {
+        right: 0;
+    }
+
+    .navbar .navbar-nav a {
+        display: block;
+        margin: 1.5rem;
+        padding: 0.5rem;
+        font-size: 1.2rem;
+    }
+    
+    .lobby-header h1 {
+        font-size: 2.5rem;
+    }
+}

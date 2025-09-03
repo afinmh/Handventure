@@ -23,12 +23,6 @@ let mode = 'NORMAL';
 let ejaan_buffer = [];
 let isCameraActive = false;
 
-// Variabel untuk tracking canvas dan context
-let tempCanvas, tempCtx;
-let frameCount = 0;
-let lastProcessTime = 0;
-const PROCESS_INTERVAL = 33; // ~30 FPS limit untuk mencegah overload
-
 // --- Kalibrasi Bahu ---
 const LEFT_SHOULDER_THRESH  = [0.70, 0.85, 0.75, 0.90];
 const RIGHT_SHOULDER_THRESH = [0.20, 0.40, 0.75, 0.90];
@@ -62,16 +56,6 @@ function speakEjaan(letterArray) { if (!letterArray || letterArray.length === 0)
 
 // --- Fungsi Utama Aplikasi ---
 async function onResults(results) {
-    // Early return jika kamera tidak aktif
-    if (!isCameraActive) return;
-    
-    // Throttling untuk mencegah overload - limit ke ~30 FPS
-    const now = Date.now();
-    if (now - lastProcessTime < PROCESS_INTERVAL) {
-        return;
-    }
-    lastProcessTime = now;
-    
     canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
     canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
     drawConnectors(canvasCtx, results.poseLandmarks, POSE_CONNECTIONS, { color: 'rgba(0, 255, 0, 0.5)', lineWidth: 2 });
@@ -86,36 +70,7 @@ async function onResults(results) {
     
     const isVisible = results.poseLandmarks && (results.leftHandLandmarks || results.rightHandLandmarks);
     if (isVisible) { if (status === 'MENUNGGU') { status = 'MEREKAM'; } if (status === 'MEREKAM') { const keypoints = extractKeypoints(results); sequence.push(keypoints); sequence = sequence.slice(-20); } } else { status = 'MENUNGGU'; sequence = []; }
-    if (sequence.length === 20) { 
-        let inputTensor, prediction;
-        try {
-            inputTensor = tf.tensor([sequence]); 
-            prediction = model.predict(inputTensor); 
-            const res = await prediction.data(); 
-            
-            const maxProb = Math.max(...res); 
-            if (maxProb > threshold) { 
-                const predIndex = res.indexOf(maxProb); 
-                const currentPrediction = actions[predIndex]; 
-                if (mode === 'NORMAL') { 
-                    if (currentPrediction !== last_prediction) { 
-                        last_prediction = currentPrediction; 
-                        speak(currentPrediction); 
-                    } 
-                } else if (mode === 'EJA') { 
-                    if (!ejaan_buffer.length || currentPrediction !== ejaan_buffer[ejaan_buffer.length - 1]) { 
-                        ejaan_buffer.push(currentPrediction); 
-                        last_prediction = ""; 
-                    } 
-                } 
-            } 
-        } finally {
-            // Cleanup tensors to prevent memory leak
-            if (inputTensor) tf.dispose(inputTensor);
-            if (prediction) tf.dispose(prediction);
-        }
-        sequence = []; 
-    }
+    if (sequence.length === 20) { const inputTensor = tf.tensor([sequence]); const prediction = model.predict(inputTensor); const res = await prediction.data(); tf.dispose(inputTensor); tf.dispose(prediction); const maxProb = Math.max(...res); if (maxProb > threshold) { const predIndex = res.indexOf(maxProb); const currentPrediction = actions[predIndex]; if (mode === 'NORMAL') { if (currentPrediction !== last_prediction) { last_prediction = currentPrediction; speak(currentPrediction); } } else if (mode === 'EJA') { if (!ejaan_buffer.length || currentPrediction !== ejaan_buffer[ejaan_buffer.length - 1]) { ejaan_buffer.push(currentPrediction); last_prediction = ""; } } } sequence = []; }
     predictionDisplay.textContent = mode === 'EJA' ? 'EJA: ' + ejaan_buffer.join('') : last_prediction;
     statusText.textContent = (status === 'MEREKAM') ? `MEREKAM (${sequence.length}/20)` : "MENUNGGU";
     statusIndicator.classList.toggle('recording', status === 'MEREKAM');
@@ -329,18 +284,14 @@ async function initializeApp() {
         holistic.onResults(onResults);
         console.log('MediaPipe instance created');
         
-        updateLoadingText('Warming up MediaPipe...');
+        updateLoadingText('Warming up MediaPipe (cukup memakan waktu)...');
         // Tunggu MediaPipe benar-benar siap - ini yang paling penting!
         await waitForMediaPipeReady();
         console.log('MediaPipe warmup complete');
         
         updateLoadingText('Menyiapkan Kamera...');
-        
-        // Inisialisasi canvas dan context sekali saja
-        if (!tempCanvas) {
-            tempCanvas = document.createElement('canvas');
-            tempCtx = tempCanvas.getContext('2d');
-        }
+        const tempCanvas = document.createElement('canvas');
+        const tempCtx = tempCanvas.getContext('2d');
         
         // Buat objek kamera setelah MediaPipe siap
         camera = new Camera(videoElement, {
@@ -351,14 +302,8 @@ async function initializeApp() {
                 }
                 
                 try {
-                    frameCount++;
-                    
-                    // Resize canvas hanya jika ukuran berubah
-                    if (tempCanvas.width !== videoElement.videoWidth || tempCanvas.height !== videoElement.videoHeight) {
-                        tempCanvas.width = videoElement.videoWidth;
-                        tempCanvas.height = videoElement.videoHeight;
-                    }
-                    
+                    tempCanvas.width = videoElement.videoWidth;
+                    tempCanvas.height = videoElement.videoHeight;
                     tempCtx.save();
                     tempCtx.translate(tempCanvas.width, 0); 
                     tempCtx.scale(-1, 1);
@@ -366,15 +311,6 @@ async function initializeApp() {
                     tempCtx.restore();
                     
                     await holistic.send({ image: tempCanvas });
-                    
-                    // Log FPS dan memory usage setiap 100 frame untuk monitoring
-                    if (frameCount % 100 === 0) {
-                        const memInfo = performance.memory ? {
-                            used: Math.round(performance.memory.usedJSHeapSize / 1024 / 1024),
-                            total: Math.round(performance.memory.totalJSHeapSize / 1024 / 1024)
-                        } : null;
-                        console.log(`Frame ${frameCount} processed${memInfo ? `, Memory: ${memInfo.used}/${memInfo.total}MB` : ''}`);
-                    }
                 } catch (error) {
                     console.error('Error in onFrame:', error);
                 }
@@ -401,67 +337,16 @@ async function startCamera() {
         return;
     }
     
-    // Jika kamera sudah aktif, jangan start lagi
-    if (isCameraActive) {
-        console.warn('Camera already active');
-        return;
-    }
-    
     // Show loading hanya untuk memulai kamera
     loadingOverlay.classList.add('show');
     updateLoadingText('Memulai kamera...');
     
     try {
-        // Reset frame counter
-        frameCount = 0;
-        
-        // Pastikan kamera benar-benar berhenti dulu
-        if (camera) {
-            try {
-                await camera.stop();
-                // Delay untuk cleanup
-                await new Promise(resolve => setTimeout(resolve, 200));
-            } catch (e) {
-                console.warn('Error stopping previous camera instance:', e);
-            }
+        // Pastikan kamera benar-benar bersih sebelum start
+        if (isCameraActive) {
+            await camera.stop();
+            await new Promise(resolve => setTimeout(resolve, 100));
         }
-        
-        // Reuse existing canvas dan context, tidak buat baru
-        if (!tempCanvas) {
-            tempCanvas = document.createElement('canvas');
-            tempCtx = tempCanvas.getContext('2d');
-        }
-        
-        // Buat ulang camera object dengan reused canvas
-        camera = new Camera(videoElement, {
-            onFrame: async () => {
-                // Pastikan semua komponen siap sebelum memproses frame
-                if (!holistic || !isCameraActive || !videoElement.videoWidth || !videoElement.videoHeight) {
-                    return;
-                }
-                
-                try {
-                    frameCount++;
-                    
-                    // Resize canvas hanya jika ukuran berubah
-                    if (tempCanvas.width !== videoElement.videoWidth || tempCanvas.height !== videoElement.videoHeight) {
-                        tempCanvas.width = videoElement.videoWidth;
-                        tempCanvas.height = videoElement.videoHeight;
-                    }
-                    
-                    tempCtx.save();
-                    tempCtx.translate(tempCanvas.width, 0); 
-                    tempCtx.scale(-1, 1);
-                    tempCtx.drawImage(videoElement, 0, 0, tempCanvas.width, tempCanvas.height);
-                    tempCtx.restore();
-                    
-                    await holistic.send({ image: tempCanvas });
-                } catch (error) {
-                    console.error('Error in onFrame:', error);
-                }
-            },
-            width: 640, height: 480 
-        });
         
         await camera.start();
         
@@ -489,8 +374,6 @@ async function startCamera() {
     } catch(e) {
         console.error("Gagal memulai kamera:", e);
         updateLoadingText('Gagal memulai kamera!');
-        isCameraActive = false;
-        setButtonState('inactive');
         setTimeout(() => {
             loadingOverlay.classList.remove('show');
         }, 1500);
@@ -508,92 +391,52 @@ function startCalibration() {
     guideModal.classList.remove('show');
     calibrationOverlay.classList.add('show');
     
-    // Reset kalibrasi menggunakan fungsi helper
-    resetCalibration();
-}
-
-function stopCamera() {
-    if (camera) {
-        try {
-            camera.stop();
-        } catch (e) {
-            console.warn('Error stopping camera:', e);
-        }
-        
-        isCameraActive = false;
-        canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-        
-        // Reset semua status ke kondisi awal
-        status = 'MENUNGGU';
-        last_prediction = '';
-        sequence = [];
-        frameCount = 0;
-        lastProcessTime = 0;
-        
-        // Reset kalibrasi jika sedang berlangsung
-        if (!isCalibrated) {
-            resetCalibration();
-        }
-        
-        // Sembunyikan overlay kalibrasi jika masih tampil
-        calibrationOverlay.classList.remove('show');
-        guideModal.classList.remove('show');
-        
-        // Clear video element
-        if (videoElement.srcObject) {
-            const tracks = videoElement.srcObject.getTracks();
-            tracks.forEach(track => track.stop());
-            videoElement.srcObject = null;
-        }
-        
-        // Force garbage collection hint
-        if (window.gc) {
-            window.gc();
-        }
-        
-        setButtonState('inactive');
-        console.log("Kamera dihentikan dan resources dibersihkan. Frame count:", frameCount);
-    }
-}
-
-// Fungsi helper untuk reset kalibrasi
-function resetCalibration() {
+    // Reset kalibrasi
     isCalibrated = false;
     calibrationFrames = 0;
     calibrationProgress = 0;
     leftShoulderCalibrated = false;
     rightShoulderCalibrated = false;
     
-    // Reset visual elements jika ada
-    const leftZone = document.querySelector('.left-shoulder');
-    const rightZone = document.querySelector('.right-shoulder');
-    
-    if (leftZone) leftZone.classList.remove('calibrated');
-    if (rightZone) rightZone.classList.remove('calibrated');
-    
-    if (calibrationBar) calibrationBar.style.width = '0%';
-    if (calibrationText) calibrationText.textContent = 'Posisikan kedua bahu pada area hijau';
+    // Reset visual elements
+    document.querySelector('.left-shoulder').classList.remove('calibrated');
+    document.querySelector('.right-shoulder').classList.remove('calibrated');
+    calibrationBar.style.width = '0%';
+    calibrationText.textContent = 'Posisikan kedua bahu pada area hijau';
 }
 
-// Fungsi untuk monitoring dan cleanup memory
-function performanceCleanup() {
-    // TensorFlow.js memory cleanup
-    if (typeof tf !== 'undefined') {
-        const memInfo = tf.memory();
-        console.log('TensorFlow.js Memory:', memInfo);
+function stopCamera() {
+    if (camera) {
+        camera.stop();
         
-        // Cleanup unused tensors
-        tf.disposeVariables();
-    }
-    
-    // Browser memory info
-    if (performance.memory) {
-        const memInfo = {
-            used: Math.round(performance.memory.usedJSHeapSize / 1024 / 1024),
-            total: Math.round(performance.memory.totalJSHeapSize / 1024 / 1024),
-            limit: Math.round(performance.memory.jsHeapSizeLimit / 1024 / 1024)
-        };
-        console.log(`Browser Memory: ${memInfo.used}/${memInfo.total}MB (Limit: ${memInfo.limit}MB)`);
+        // Tunggu sebentar untuk memastikan camera benar-benar stop
+        setTimeout(() => {
+            isCameraActive = false;
+            canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+            status = 'MENUNGGU';
+            last_prediction = '';
+            setButtonState('inactive');
+            
+            // Reset kalibrasi dan sembunyikan overlay
+            isCalibrated = false;
+            calibrationFrames = 0;
+            calibrationProgress = 0;
+            leftShoulderCalibrated = false;
+            rightShoulderCalibrated = false;
+            
+            // Sembunyikan semua overlay
+            guideModal.classList.remove('show');
+            calibrationOverlay.classList.remove('show');
+            
+            // Reset visual elements kalibrasi
+            const leftZone = document.querySelector('.left-shoulder');
+            const rightZone = document.querySelector('.right-shoulder');
+            if (leftZone) leftZone.classList.remove('calibrated');
+            if (rightZone) rightZone.classList.remove('calibrated');
+            if (calibrationBar) calibrationBar.style.width = '0%';
+            
+            console.log("Kamera dihentikan dan overlay direset.");
+        }, 100);
     }
 }
 
@@ -601,9 +444,8 @@ function performanceCleanup() {
 startCalibrationBtn.addEventListener('click', startCalibration);
 
 toggleButton.addEventListener('click', async () => {
-    // Prevent multiple clicks during camera state transition
+    // Cegah multiple click
     if (toggleButton.disabled) return;
-    
     toggleButton.disabled = true;
     
     try {
@@ -612,10 +454,8 @@ toggleButton.addEventListener('click', async () => {
         } else {
             stopCamera();
         }
-    } catch (error) {
-        console.error('Error toggling camera:', error);
     } finally {
-        // Re-enable button after a short delay
+        // Re-enable button setelah operasi selesai
         setTimeout(() => {
             toggleButton.disabled = false;
         }, 500);
@@ -634,34 +474,6 @@ window.addEventListener('keydown', (event) => {
         }
     }
 });
-
-// Cleanup saat window ditutup atau refresh
-window.addEventListener('beforeunload', () => {
-    if (isCameraActive && camera) {
-        camera.stop();
-    }
-});
-
-// Cleanup saat visibility berubah (tab switching)
-document.addEventListener('visibilitychange', () => {
-    if (document.hidden && isCameraActive) {
-        // Optional: pause camera when tab is hidden to save resources
-        console.log('Tab hidden, camera still running');
-    }
-});
-
-// Periodic cleanup untuk mencegah memory leak
-setInterval(() => {
-    if (isCameraActive && frameCount > 1000) {
-        performanceCleanup();
-        
-        // Reset frame count untuk mencegah overflow
-        if (frameCount > 10000) {
-            frameCount = 0;
-            console.log('Frame counter reset');
-        }
-    }
-}, 30000); // Cleanup setiap 30 detik
 
 // Inisialisasi tampilan tombol awal dan muat aset
 setButtonState('inactive');

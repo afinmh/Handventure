@@ -1,0 +1,81 @@
+/* /css/coming-soon.css */
+
+:root {
+    --bg-main: #FBFBFB;
+    --text-dark: #8D6E63;
+    --accent: #D16A4C;
+    --accent-dark: #8C5A3C;
+    --navbar-height: 80px; /* Asumsi tinggi navbar */
+}
+
+body {
+    background-color: var(--bg-main);
+    font-family: 'Poppins', sans-serif;
+}
+
+.coming-soon-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Memusatkan konten secara vertikal */
+    align-items: center;   /* Memusatkan konten secara horizontal */
+    text-align: center;
+    height: calc(100vh - var(--navbar-height));
+    padding: 1rem;
+    box-sizing: border-box;
+    color: var(--text-dark);
+    /* [PERBAIKAN] Menggunakan gap untuk jarak yang konsisten */
+    gap: 1.5rem; 
+}
+
+.coming-soon-image {
+    max-width: 280px; /* Ukuran yang ringkas */
+    width: 100%;
+    /* [HAPUS] margin-bottom dihapus, diatur oleh gap */
+}
+
+.coming-soon-container h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin: 0; /* [HAPUS] Semua margin dihapus */
+}
+
+.coming-soon-container p {
+    font-size: 0.9rem;
+    color: #6c757d;
+    line-height: 1.6;
+    max-width: 500px;
+    margin: 0; /* [HAPUS] Semua margin dihapus */
+}
+
+.back-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: var(--accent);
+    color: white;
+    padding: 0.7rem 1.8rem;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.back-button:hover {
+    background-color: var(--accent-dark);
+    transform: translateY(-2px);
+}
+
+.back-button i {
+    width: 16px;
+    height: 16px;
+}
+
+@media (max-width: 768px) {
+    .coming-soon-container {
+        gap: 1rem; /* Jarak lebih kecil di mobile */
+    }
+    .coming-soon-image { max-width: 220px; }
+    .coming-soon-container h1 { font-size: 1.5rem; }
+    .coming-soon-container p { font-size: 0.85rem; }
+}

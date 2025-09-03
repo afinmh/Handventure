@@ -126,16 +126,20 @@
 
 @media (max-width: 768px) {
     .cta-section-alt {
-        padding: 4rem 1rem;
+        padding: 4rem 1.5rem;
     }
     .cta-buttons {
         flex-direction: column;
         align-items: center;
         gap: 1rem;
+        width: 100%;
     }
     .cta-section-alt .cta-primary,
     .cta-section-alt .cta-secondary {
-        min-width: 90%;
+        width: 100%; 
+        max-width: 400px;
         padding: 1rem 2rem;
+        /* [PERBAIKAN] Tambahkan baris ini */
+        box-sizing: border-box;
     }
 }
