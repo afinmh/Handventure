@@ -6,19 +6,19 @@
 
     // Gesture data dengan nama yang lebih user-friendly
     const gestureData = {
-        'a': { name: 'Huruf A', image: 'images/placeholder.png' },
-        'f': { name: 'Huruf F', image: 'images/placeholder.png' },
-        'halo': { name: 'Halo', image: 'images/placeholder.png' },
-        'i': { name: 'Huruf I', image: 'images/placeholder.png' },
-        'kamu': { name: 'Kamu', image: 'images/placeholder.png' },
-        'l': { name: 'Huruf L', image: 'images/placeholder.png' },
-        'n': { name: 'Huruf N', image: 'images/placeholder.png' },
-        'nama': { name: 'Nama', image: 'images/placeholder.png' },
-        'perkenalkan': { name: 'Perkenalkan', image: 'images/placeholder.png' },
-        'saya': { name: 'Saya', image: 'images/placeholder.png' },
-        'siapa': { name: 'Siapa', image: 'images/placeholder.png' },
-        'terimakasih': { name: 'Terima Kasih', image: 'images/placeholder.png' },
-        'u': { name: 'Huruf U', image: 'images/placeholder.png' }
+        'a': { name: 'Huruf A', image: '/asset/images/placeholder.png' },
+        'f': { name: 'Huruf F', image: '/asset/images/placeholder.png' },
+        'halo': { name: 'Halo', image: '/asset/images/placeholder.png' },
+        'i': { name: 'Huruf I', image: '/asset/images/placeholder.png' },
+        'kamu': { name: 'Kamu', image: '/asset/images/placeholder.png' },
+        'l': { name: 'Huruf L', image: '/asset/images/placeholder.png' },
+        'n': { name: 'Huruf N', image: '/asset/images/placeholder.png' },
+        'nama': { name: 'Nama', image: '/asset/images/placeholder.png' },
+        'perkenalkan': { name: 'Perkenalkan', image: '/asset/images/placeholder.png' },
+        'saya': { name: 'Saya', image: '/asset/images/placeholder.png' },
+        'siapa': { name: 'Siapa', image: '/asset/images/placeholder.png' },
+        'terimakasih': { name: 'Terima Kasih', image: '/asset/images/placeholder.png' },
+        'u': { name: 'Huruf U', image: '/asset/images/placeholder.png' }
     };
 
     class GestureCarousel {

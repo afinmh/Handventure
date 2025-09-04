@@ -124,7 +124,7 @@ const HandventureApp = {
                     }
                     
                     if (noteToPlay && noteToPlay !== this.lastPlayedNote) {
-                        const audioPath = `../audio/${noteToPlay}.mp3`;
+                        const audioPath = `../asset/audio/${noteToPlay}.mp3`;
                         const sound = new Audio(audioPath);
                         sound.play().catch(e => console.error(`Error audio: ${e.message}`));
                         this.lastPlayedNote = noteToPlay;
@@ -190,7 +190,7 @@ const HandventureApp = {
     updateCarouselDisplay() {
         const gestureName = this.gestureList[this.currentGestureIndex];
         this.elements.gestureName.innerText = gestureName;
-        this.elements.gestureImage.src = `../images/gestures/${gestureName}.png`;
+        this.elements.gestureImage.src = `../asset/images/gestures/${gestureName}.png`;
     },
     nextGesture() {
         this.currentGestureIndex = (this.currentGestureIndex + 1) % this.gestureList.length;

@@ -271,6 +271,46 @@ html, body {
     font-size: 0.95rem;
 }
 
+/* Styling untuk kartu panduan penggunaan */
+
+.panduan-card {
+    display: flex;
+    flex-direction: column;
+}
+
+.panduan-card .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.panduan-card .gesture-title-wrapper {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+}
+
+.panduan-card .guide-list ol {
+    padding-left: 20px;
+    margin: 0;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.panduan-card .guide-list li {
+    line-height: 1.6;
+    margin-bottom: 0.75rem;
+}
+
+.panduan-card .guide-list li:last-child {
+    margin-bottom: 0;
+}
+
+.panduan-card .guide-list li b {
+    color: #333;
+}
+
 /* --- Remove old guide card list styling --- */
 .guide-card ul { display: none; } /* Hide the old list if it's still there */
 .enter-key-info { text-align: center; font-size: 0.8rem; color: #888; flex-shrink: 0; }

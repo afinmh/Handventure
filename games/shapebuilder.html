@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Handventure | Kodály Piano</title>
+    <title>Handventure | Shapebuilder</title>
     <link rel="icon" type="image/png" href="../asset/images/favicon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,7 +23,7 @@
         <header class="app-header">
             <a href="../games.html" class="header-logo">
                 <img src="..//asset/images/favicon.png" alt="Logo Handventure">
-                Kodály Piano<span>.</span>
+                Shapebuilder<span>.</span>
             </a>
             <nav class="header-nav">
                 <a href="../translate.html">
@@ -54,7 +54,7 @@
             <div class="info-panels">
                 <div class="info-card prediction-card">
                     <div class="card-header-prediction">
-                        <h4>Hasil Deteksi</h4>
+                        <h4>Bangun Datar</h4>
                         <div class="status-box">
                             <div id="status-indicator" class="status-indicator"></div>
                             <span id="status-text">MENUNGGU</span>
@@ -63,48 +63,32 @@
                     <div id="prediction-display" class="prediction-text">-</div>
                 </div>
 
-                <div class="info-card guide-card">
+                <div class="info-card panduan-card">
                     <div class="card-header">
                         <div class="gesture-title-wrapper">
-                            <h4>Gesture</h4>
-                            <span class="gesture-count">(13)</span>
+                            <h4>Panduan Penggunaan</h4>
+                        </div>
                         </div>
 
-                        <div class="search-wrapper">
-                            <i data-feather="search" class="search-icon"></i>
-                            <input type="text" placeholder="Cari gestur...">
-                        </div>
+                    <div class="guide-list">
+                        <ol>
+                            <li><b>Cubit & Tarik:</b> Gunakan jempol–telunjuk untuk menarik sudut bentuk.</li>
+                            <li><b>Ubah Bentuk:</b> Tekan tombol (+), (–), (R) untuk atur sudut atau reset.</li>
+                            <li><b>Dua Tangan:</b> Kendalikan dua sudut sekaligus dengan kedua tangan.</li>
+                            <li><b>Hasil:</b> Panel deteksi menampilkan jenis bentuk otomatis.</li>
+                        </ol>
                     </div>
-
-                    <div class="gesture-carousel">
-                        <button class="carousel-btn prev">
-                            <i data-feather="chevron-left"></i>
-                        </button>
-                        <div class="gesture-display">
-                            <div class="gesture-image-container">
-                                <img src="../asset/images/placeholder.png" alt="Gesture Example" id="gesture-image">
-                            </div>
-                            <p id="gesture-name">Huruf A</p>
-                        </div>
-                        <button class="carousel-btn next">
-                            <i data-feather="chevron-right"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="info-card enter-key-info">
-                    <span>Tekan <kbd>Enter</kbd> untuk beralih mode</span>
                 </div>
             </div>
         </main>
     </div>
     
-    <script src="../asset/js/kodaly.js"></script>
+    <script src="../asset/js/shape.js"></script>
     <script>
       feather.replace(); // Inisialisasi Feather Icons
       // Pastikan semua elemen HTML sudah dimuat sebelum menjalankan aplikasi
 document.addEventListener('DOMContentLoaded', () => {
-    HandventureApp.init();
+    ShapeBuilderApp.init();
 });
     </script>
 </body>

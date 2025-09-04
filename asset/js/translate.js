@@ -182,8 +182,6 @@ function setButtonState(state) {
     }
 }
 
-// --- [PERBAIKAN] Fungsi Inisialisasi dan Start/Stop ---
-
 // Fungsi helper untuk update loading text
 function updateLoadingText(text) {
     const loadingText = loadingOverlay.querySelector('h3');
