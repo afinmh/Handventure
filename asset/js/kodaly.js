@@ -183,9 +183,10 @@ const HandventureApp = {
         this.elements.statusIndicator.style.backgroundColor = color;
     },
     setupCarousel() {
-        this.gestureList = Object.keys(this.labelMap);
-        this.currentGestureIndex = 0;
-        this.updateCarouselDisplay();
+    // Urutan carousel diatur manual sesuai permintaan
+    this.gestureList = ['do', 're', 'mi', 'fa', 'sol', 'la', 'si'];
+    this.currentGestureIndex = 0;
+    this.updateCarouselDisplay();
     },
     updateCarouselDisplay() {
         const gestureName = this.gestureList[this.currentGestureIndex];
